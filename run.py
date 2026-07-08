@@ -17,6 +17,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent / "src"))
 
 from agora.config import load_config  # noqa: E402
 from agora.model import Model  # noqa: E402
+from agora.report import write_summary_md  # noqa: E402
 
 
 def main() -> int:
@@ -35,8 +36,15 @@ def main() -> int:
 
     model = Model(cfg, run_name=args.name)
     summary = model.run()
-    print(json.dumps(summary, indent=2, sort_keys=True))
-    print(f"\nrun complete -> {model.log.dir}")
+    write_summary_md(model.log.dir, model.log.epoch_rows, summary)
+    print(json.dumps({k: v for k, v in summary.items() if k != "kill_criteria"},
+                     indent=2, sort_keys=True))
+    kill = summary["kill_criteria"]
+    print("\nkill criteria:", "HALT AND REDESIGN" if kill["any_tripped"] else "PASS")
+    for name, verdict in kill.items():
+        if name != "any_tripped" and verdict["tripped"]:
+            print(f"  TRIPPED {name}: {verdict['detail']}")
+    print(f"run complete -> {model.log.dir}")
     return 0
 
 

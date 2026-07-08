@@ -20,14 +20,19 @@ from pathlib import Path
 
 
 class RunLog:
-    def __init__(self, out_dir: str | Path, run_name: str, events_enabled: bool = True):
+    def __init__(self, out_dir: str | Path, run_name: str, events_enabled: bool = True,
+                 persist: bool = True):
+        """persist=False keeps everything in memory and writes no files — used by
+        the parameter sweep, where thousands of runs need only their aggregates."""
         self.dir = Path(out_dir) / run_name
-        self.dir.mkdir(parents=True, exist_ok=True)
         self.run_name = run_name
         self.epoch_rows: list[dict] = []
-        self.events_enabled = events_enabled
+        self.persist = persist
+        self.events_enabled = events_enabled and persist
         self._events_fh = None
-        if events_enabled:
+        if persist:
+            self.dir.mkdir(parents=True, exist_ok=True)
+        if self.events_enabled:
             self._events_fh = open(self.dir / "events.jsonl", "w", encoding="utf-8", newline="\n")
 
     def epoch_row(self, row: dict) -> None:
@@ -42,6 +47,8 @@ class RunLog:
         self._events_fh.write(json.dumps(record, sort_keys=True) + "\n")
 
     def finalize(self, summary: dict) -> Path:
+        if not self.persist:
+            return self.dir
         with open(self.dir / "epochs.csv", "w", encoding="utf-8", newline="") as fh:
             if self.epoch_rows:
                 writer = csv.DictWriter(fh, fieldnames=list(self.epoch_rows[0].keys()))

@@ -31,6 +31,7 @@ from agora.basket import Basket
 from agora.config import Params
 from agora.escrow import Escrow
 from agora.feepool import FeePool
+from agora.killcriteria import evaluate as evaluate_kill_criteria
 from agora.ledger import CreditLedger
 from agora.listing import ListingMarket
 from agora.records import SettlementRecord, Task
@@ -107,8 +108,10 @@ class Model:
 
         # --- bookkeeping ------------------------------------------------------
         self.run_name = run_name or f"{cfg['meta']['name']}_s{self.seed}"
-        events = cfg.get("logging", {}).get("events", True)
-        self.log = RunLog(cfg["run"].get("out_dir", "results"), self.run_name, events_enabled=events)
+        log_cfg = cfg.get("logging", {})
+        self.log = RunLog(cfg["run"].get("out_dir", "results"), self.run_name,
+                          events_enabled=log_cfg.get("events", True),
+                          persist=log_cfg.get("persist", True))
         self.epoch = 0
         self.invariant_violations: list[str] = []
         self.total_defaults = 0
@@ -555,7 +558,11 @@ class Model:
             "final_credit_to_volume": float(rows[-1]["credit_to_volume"]) if rows else None,
             "qualified_capped_final": int(rows[-1]["qualified_capped_cum"]) if rows else 0,
             "activation_epoch": self.activation_epoch,
-            "scu_index_final": float(rows[-1]["scu_index"]) if rows else 1.0,
+            "scu_index_final": float(rows[-1]["scu_index"]) if rows else 0.0,
             "retargets": self.basket.retarget_log,
             "invariant_violations": self.invariant_violations,
+            # LS §10, evaluated after the credit window has filled (DECISIONS #13)
+            "kill_criteria": evaluate_kill_criteria(
+                rows, self.invariant_violations,
+                grace_epochs=self.params.v_window_epochs + 1),
         }

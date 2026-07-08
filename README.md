@@ -33,22 +33,26 @@ records anything unresolved.
 py -3.14 -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -r requirements.txt
 
-# run the test suite
+# run the test suite (73 tests: ledger/escrow invariants, mechanism rules, determinism)
 .\.venv\Scripts\python.exe -m pytest
 
 # run the honest baseline (26 epochs, deterministic under the config's seed)
 .\.venv\Scripts\python.exe run.py configs\baseline.yaml
 
-# run an attack scenario
-.\.venv\Scripts\python.exe run.py scenarios\s1_wash_rush.yaml
+# run one attack scenario, or all seven (Sim Plan §5)
+Set-Location scenarios
+..\.venv\Scripts\python.exe s1_wash_rush.py
+..\.venv\Scripts\python.exe run_all.py
+Set-Location ..
 
-# smoke parameter sweep (see CALIBRATION.md for the full sweep)
+# smoke parameter sweep (~10 min on 16 cores; see CALIBRATION.md for the full sweep)
 .\.venv\Scripts\python.exe sweep\run_sweep.py sweep\smoke.yaml
 ```
 
 Outputs land in `results/<run_name>/` — per-epoch `epochs.csv`, event-level `events.jsonl`,
 and `summary.md` / `summary.json` with the Sim Plan §6 metrics and the Launch Spec §10
-kill-criteria verdict.
+kill-criteria verdict. Scenario reports land in `results/scenario_reports/`, sweep reports in
+`results/sweep_reports/` (both committed).
 
 ## Repository layout
 
@@ -64,7 +68,11 @@ results/       run outputs (per-epoch logs gitignored; summaries committed)
 
 ## Status
 
-Built as Path A of the Feasibility Assessment's staged plan (simulation-first, $0 infrastructure).
-See `CALIBRATION.md` (milestone 6) for smoke-sweep results and how to launch the full sweep.
+All six build milestones complete: monetary core with exact-integer zero-sum invariants,
+full market/institution organs, the Sim Plan §3 behavior-policy population, all seven §5
+attack scenarios with leakage reports, and the §4 Latin-hypercube sweep machinery with an
+executed smoke sweep. See [CALIBRATION.md](CALIBRATION.md) for what the smoke sweep shows
+and how to launch the full sweep; [DECISIONS.md](DECISIONS.md) for every interpretation the
+specs left open (27 entries, each citing its governing section).
 
 License: [Apache-2.0](LICENSE).

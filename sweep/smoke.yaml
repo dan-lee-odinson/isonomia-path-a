@@ -1,0 +1,13 @@
+# Smoke sweep: enough coverage to see the shape of the stable region and per-
+# parameter sensitivity, small enough to run locally in minutes. The full sweep
+# (full.yaml) is the Sim Plan §4 deliverable; see CALIBRATION.md.
+name: smoke
+base_config: configs/baseline.yaml
+n_points: 60
+lhs_seed: 20260708
+n_seeds: 3
+first_seed: 42
+epochs: 26
+shock_variants: true       # ±50% inflow for 2 epochs in every sweep (Sim Plan §3)
+neighbor_radius: 0.9       # normalized-cube L2 radius for the connectivity estimate
+workers: null              # null = cpu_count − 2

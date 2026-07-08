@@ -1,16 +1,27 @@
 # Blockers
 
 Items the build could not resolve autonomously. Per the build directive, nothing here stopped
-the run — each item was documented, skipped or worked around, and the build continued.
+the run — each item was documented, worked around, and the build continued.
 
 ## Open
 
-- **GitHub authentication not completed at build time.** `gh` CLI was installed (v2.96.0) but
-  `gh auth login` had not been run when the build started. All milestones are committed locally
-  on `main`. If pushes were still failing at the end of the build, the final report includes the
-  exact commands to create the remote and push. *Workaround: none needed for the build itself;
-  publication only.* (This entry is removed if auth succeeded mid-build.)
+- **GitHub authentication was not completed during the build.** The GitHub CLI was installed
+  (v2.96.0) but `gh auth login` had not been run by the time the build finished, so the repo
+  exists locally with the full milestone commit history and could not be pushed. To publish:
+
+  ```powershell
+  & "C:\Program Files\GitHub CLI\gh.exe" auth login --hostname github.com --git-protocol https --web
+  cd C:\Users\wolfe\projects\agora-path-a
+  & "C:\Program Files\GitHub CLI\gh.exe" repo create agora-path-a --public --source . --push --description "Agent-based simulation of the AGORA Tier-1 launch economics (Path A)"
+  ```
+
+  Optionally mirror PLAN.md as issue #1 afterwards:
+
+  ```powershell
+  & "C:\Program Files\GitHub CLI\gh.exe" issue create --title "Implementation plan (PLAN.md)" --body-file PLAN.md
+  ```
 
 ## Resolved
 
-*(none yet)*
+- *(none — every other item in the build ran to completion; interpretation calls went to
+  DECISIONS.md rather than blocking.)*

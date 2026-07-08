@@ -85,7 +85,14 @@ volume for 3 epochs" is operationalized as: 3 consecutive epochs in which
 `Δlog(credit_outstanding) > max(0, Δlog(settled_volume)) + 0.02`. Credit growing 2 log-points
 faster than volume (or growing while volume stalls) for 3 straight epochs trips the criterion.
 The margin filters float-level noise; the `max(0,·)` term makes credit growth during volume
-collapse count as superlinear, the conservative reading. *Interprets:* LS §10.
+collapse count as superlinear, the conservative reading. Two qualifiers keep the criterion
+aimed at the pathology §10 names rather than at every cold start: (a) evaluation begins after
+the credit system's own trailing window has filled (epoch > v_window_epochs + 1); (b) the
+streak requires *non-decreasing* Δlog(credit) — "superlinear" is log-convexity: an
+equilibrating stock approaches its plateau at decaying rates (the mutual-credit bootstrap,
+WP §4.2), while a spiral grows at non-decreasing rates. Path A feedback for the Launch Spec:
+§10's supply criterion needs this precision in contract form, or every honest launch halts
+itself during ramp-up. *Interprets:* LS §10.
 
 **#14 — Disputes are stochastic outcomes.** Per Sim Plan §1 (out of scope: jury deliberation
 content), each settlement candidate disputes with a small probability and overturns with a fixed

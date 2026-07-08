@@ -1,0 +1,66 @@
+{
+  "activation_epoch": 12,
+  "config_fingerprint": "808ceb02646d45db",
+  "epochs": 26,
+  "family_counts": {
+    "0": 74,
+    "1": 76,
+    "2": 59,
+    "3": 31
+  },
+  "final_credit_to_volume": 2.9733,
+  "final_fee_rate": 0.010129,
+  "invariant_violations": [],
+  "kill_criteria": {
+    "adversary_finding": {
+      "detail": "no ledger-invariant violations",
+      "tripped": false
+    },
+    "any_tripped": false,
+    "auditor_recall_lt_80pct": {
+      "detail": "cumulative recall 0.8768 (484/552 seeded)",
+      "tripped": false
+    },
+    "dispute_rate_gt_10pct": {
+      "detail": "max 0.0299",
+      "tripped": false
+    },
+    "socialization_gt_5pct": {
+      "detail": "max 0.0000",
+      "tripped": false
+    },
+    "supply_superlinear": {
+      "detail": "no 3-epoch streak after grace=7",
+      "tripped": false
+    }
+  },
+  "master_seed": 42,
+  "n_agents": 240,
+  "n_principals": 58,
+  "policy_counts": {
+    "adaptive": 24,
+    "defaulter": 12,
+    "honest": 132,
+    "marginal": 24,
+    "orchestrator": 24,
+    "overstater": 12,
+    "understater": 12
+  },
+  "qualified_capped_final": 10729,
+  "retargets": [
+    {
+      "admitted": 120,
+      "difficulty_after": 0.19539962589309678,
+      "difficulty_before": -0.12413890815622443,
+      "epoch": 6,
+      "retired": 120,
+      "scu_index": 0.3195385340493212
+    }
+  ],
+  "run_name": "baseline_s42",
+  "scu_index_final": 0.319539,
+  "total_defaults": 5,
+  "total_settled": 16909,
+  "total_settled_volume_ergs": 283828.429,
+  "total_socialized_ergs": 0.0
+}

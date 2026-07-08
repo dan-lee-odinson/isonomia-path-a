@@ -1,0 +1,13 @@
+# Full Latin-hypercube sweep per Sim Plan §4: 50+ seeds per configuration.
+# Estimated wall-clock on a 16-core machine: several hours — see CALIBRATION.md
+# for the measured per-run cost and how to schedule this.
+name: full
+base_config: configs/baseline.yaml
+n_points: 300
+lhs_seed: 20260708
+n_seeds: 50
+first_seed: 42
+epochs: 26
+shock_variants: true
+neighbor_radius: 0.55      # tighter neighborhoods at 5× point density
+workers: null
