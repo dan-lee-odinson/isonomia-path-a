@@ -1,0 +1,42 @@
+{
+  "measures": {
+    "fake_principals": {
+      "activation_epoch_attack": 16,
+      "activation_epoch_twin": 12,
+      "clock_advance_from_attack": -1749,
+      "invariant_violations": 0,
+      "leakage_per_attempt": -0.227734,
+      "qualified_capped_attack": 5063,
+      "qualified_capped_twin": 6812,
+      "variant": "fake_principals",
+      "wash_attempted": 7680,
+      "wash_settled": 6309
+    },
+    "full_evasion": {
+      "activation_epoch_attack": 13,
+      "activation_epoch_twin": 12,
+      "clock_advance_from_attack": -596,
+      "invariant_violations": 0,
+      "leakage_per_attempt": -0.077604,
+      "qualified_capped_attack": 6216,
+      "qualified_capped_twin": 6812,
+      "variant": "full_evasion",
+      "wash_attempted": 7680,
+      "wash_settled": 6101
+    },
+    "honest_disclosure": {
+      "activation_epoch_attack": 0,
+      "activation_epoch_twin": 12,
+      "clock_advance_from_attack": -2440,
+      "invariant_violations": 0,
+      "leakage_per_attempt": -0.317708,
+      "qualified_capped_attack": 4372,
+      "qualified_capped_twin": 6812,
+      "variant": "honest_disclosure",
+      "wash_attempted": 7680,
+      "wash_settled": 6309
+    }
+  },
+  "scenario": "s1_wash_rush",
+  "title": "S1 \u2014 Wash-settlement activation rush"
+}

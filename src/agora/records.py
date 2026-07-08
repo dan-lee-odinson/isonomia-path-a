@@ -14,6 +14,8 @@ class Task:
     band: int
     size_units: float      # task size in median-task units; quote = rate × size_units
     poster: str = ""       # posting agent id (assigned by the demand model)
+    directed_to: str = ""  # poster-chosen worker (x402 posters pick their server;
+                           # empty = pick the best quality-adjusted rate)
 
 
 @dataclasses.dataclass

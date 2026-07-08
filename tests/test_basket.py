@@ -62,7 +62,19 @@ def test_retarget_retires_saturated_templates_and_chain_links():
     assert len(basket.active_templates()) == 600
     assert basket.mean_active_difficulty() > before_difficulty  # frontier admitted
     assert result["scu_index"] == basket.scu_index
-    assert basket.scu_index != 1.0                  # chain-linked movement recorded
+    assert basket.scu_index != 0.0                  # chain-linked shift recorded
+
+
+def test_retarget_damping_bounded_by_reserve():
+    basket = make_basket({"n_reserve_templates": 20})
+    # Saturate far more templates than the 20-template reserve can replace.
+    for template in sorted(basket.active_templates(), key=lambda t: t.difficulty)[:100]:
+        for _ in range(10):
+            basket.record_outcome(template.id, True)
+    result = basket.retarget(epoch=6, retire_threshold=0.60)
+    assert result["retired"] == 20                  # damped to reserve availability
+    assert result["admitted"] == 20
+    assert len(basket.active_templates()) == 600    # the measuring rod keeps its length
 
 
 def test_templates_without_evidence_are_not_retired():
@@ -70,7 +82,7 @@ def test_templates_without_evidence_are_not_retired():
     result = basket.retarget(epoch=6, retire_threshold=0.60)  # no outcomes recorded
     assert result["retired"] == 0
     assert result["admitted"] == 0
-    assert basket.scu_index == 1.0
+    assert basket.scu_index == 0.0
 
 
 def test_template_lookup_stable_across_retarget():

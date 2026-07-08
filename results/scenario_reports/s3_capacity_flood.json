@@ -1,0 +1,73 @@
+{
+  "measures": {
+    "flood_overflow_unmatched_total": 5673,
+    "flood_settled_total": 388,
+    "flood_spend_ergs_total": 7089.354,
+    "invariant_violations": 0,
+    "n_seeds": 6,
+    "overflow_share_of_flood": 0.936,
+    "per_seed": [
+      {
+        "flood_overflow_unmatched": 1431,
+        "flood_settled": 69,
+        "flood_spend_ergs": 1188.869,
+        "income_ratio": 0.9747,
+        "invariant_violations": 0,
+        "seed": 42,
+        "victim": "a0090"
+      },
+      {
+        "flood_overflow_unmatched": 546,
+        "flood_settled": 67,
+        "flood_spend_ergs": 1185.331,
+        "income_ratio": null,
+        "invariant_violations": 0,
+        "seed": 43,
+        "victim": "a0063"
+      },
+      {
+        "flood_overflow_unmatched": 362,
+        "flood_settled": 64,
+        "flood_spend_ergs": 1190.556,
+        "income_ratio": null,
+        "invariant_violations": 0,
+        "seed": 44,
+        "victim": "a0167"
+      },
+      {
+        "flood_overflow_unmatched": 631,
+        "flood_settled": 70,
+        "flood_spend_ergs": 1184.123,
+        "income_ratio": null,
+        "invariant_violations": 0,
+        "seed": 45,
+        "victim": "a0191"
+      },
+      {
+        "flood_overflow_unmatched": 2157,
+        "flood_settled": 52,
+        "flood_spend_ergs": 1161.497,
+        "income_ratio": 0.9579,
+        "invariant_violations": 0,
+        "seed": 46,
+        "victim": "a0117"
+      },
+      {
+        "flood_overflow_unmatched": 546,
+        "flood_settled": 66,
+        "flood_spend_ergs": 1178.978,
+        "income_ratio": null,
+        "invariant_violations": 0,
+        "seed": 47,
+        "victim": "a0132"
+      }
+    ],
+    "victim_income_ratio_median": 0.9747,
+    "victim_income_ratio_range": [
+      0.9579,
+      0.9747
+    ]
+  },
+  "scenario": "s3_capacity_flood",
+  "title": "S3 \u2014 Capacity flood"
+}

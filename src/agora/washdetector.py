@@ -1,5 +1,9 @@
 """WashDetector — self-dealing pattern flags (LS §9).
 
+Statistical flags use MEDIAN/MAD, not mean/sd: a mass attack shifts the mean and
+inflates the sd of the very distribution it is measured against, hiding itself;
+the median holds as long as attackers are a minority of agents.
+
 Four detectors over each epoch's settlement graph, thresholds config-tunable
 (Sim Plan §2):
 
@@ -17,9 +21,23 @@ known-honest agents every epoch.
 
 from __future__ import annotations
 
-import math
-
 from agora.records import SettlementRecord
+
+
+def _median(xs: list[float]) -> float:
+    xs = sorted(xs)
+    n = len(xs)
+    mid = n // 2
+    return xs[mid] if n % 2 else (xs[mid - 1] + xs[mid]) / 2.0
+
+
+def robust_z(value: float, population: list[float]) -> float:
+    """z-score against median/MAD (consistency-scaled). Falls back to a tiny
+    scale floor so a perfectly uniform population still separates outliers."""
+    med = _median(population)
+    mad = _median([abs(x - med) for x in population])
+    scale = max(1.4826 * mad, 1e-9)
+    return (value - med) / scale
 
 
 class WashDetector:
@@ -139,23 +157,60 @@ class WashDetector:
             eligible = [a for a in sorted(per_agent_total) if per_agent_total[a] >= 5]
             shares = {a: trivial_counts.get(a, 0) / per_agent_total[a] for a in eligible}
             if len(eligible) >= 8:
-                mean = sum(shares.values()) / len(shares)
-                var = sum((v - mean) ** 2 for v in shares.values()) / len(shares)
-                sd = math.sqrt(var)
-                if sd > 1e-9:
-                    # A spammer's business IS envelope-minimum tasks: besides being
-                    # a statistical outlier, the agent's trade must actually be
-                    # dominated by trivial tasks (share/count floors) — a lognormal
-                    # task mix always has z-tail agents, and they are not spammers.
-                    spammers = {
-                        a for a, v in shares.items()
-                        if (v - mean) / sd >= self.cfg["trivial_rate_z"]
-                        and v >= self.cfg["trivial_min_share"]
-                        and trivial_counts.get(a, 0) >= self.cfg["trivial_min_count"]
-                    }
-                    for s in settled:
-                        if s.size_units <= trivial_cut and (s.poster in spammers or s.worker in spammers):
-                            flag(s, "trivial_spam")
+                population = list(shares.values())
+                # A spammer's business IS envelope-minimum tasks: besides being a
+                # robust-statistical outlier, the agent's trade must actually be
+                # dominated by trivial tasks (share/count floors) — a lognormal
+                # task mix always has tail agents, and they are not spammers.
+                spammers = {
+                    a for a, v in shares.items()
+                    if robust_z(v, population) >= self.cfg["trivial_rate_z"]
+                    and v >= self.cfg["trivial_min_share"]
+                    and trivial_counts.get(a, 0) >= self.cfg["trivial_min_count"]
+                }
+                for s in settled:
+                    if s.size_units <= trivial_cut and (s.poster in spammers or s.worker in spammers):
+                        flag(s, "trivial_spam")
+
+        # ---- conservation rings (settlement-graph correlation, LS §9) -------
+        # Long wash rings (A→B→…→Z→A) evade pairwise-cycle checks and can pace
+        # per-agent counts under the trivial-spam floors. Their unavoidable
+        # signature under mutual credit: NEAR-ZERO NET FLOW at high gross flow.
+        # A ring member on a 200-erg floor must recycle what it receives — its
+        # in-value ≈ out-value every epoch, by construction, forever. Honest
+        # traders are lopsided (workers net-earn, posters net-spend) or balanced
+        # only noisily. Flag settlements BETWEEN two conservation-flagged agents.
+        # A fully-circulating honest economy also nets near zero — but against the
+        # WHOLE market. The ring nets near zero against a tiny counterparty set.
+        # Both conditions must hold: balanced flow AND top-counterparty
+        # concentration.
+        gross_in: dict[str, int] = {}
+        gross_out: dict[str, int] = {}
+        gross_n: dict[str, int] = {}
+        counterparties: dict[str, dict[str, int]] = {}
+        for s in settled:
+            gross_out[s.poster] = gross_out.get(s.poster, 0) + s.quote
+            gross_in[s.worker] = gross_in.get(s.worker, 0) + s.quote
+            for me, other in ((s.poster, s.worker), (s.worker, s.poster)):
+                gross_n[me] = gross_n.get(me, 0) + 1
+                counterparties.setdefault(me, {})[other] = counterparties.get(me, {}).get(other, 0) + 1
+        conserving: set[str] = set()
+        for agent in sorted(gross_n):
+            if gross_n[agent] < self.cfg["conserve_min_settlements"]:
+                continue
+            inflow = gross_in.get(agent, 0)
+            outflow = gross_out.get(agent, 0)
+            gross = inflow + outflow
+            if not inflow or not outflow or not gross:
+                continue
+            if abs(inflow - outflow) / gross > self.cfg["conserve_net_ratio"]:
+                continue
+            top3 = sum(sorted(counterparties[agent].values(), reverse=True)[:3])
+            if top3 / gross_n[agent] >= self.cfg["conserve_top_share"]:
+                conserving.add(agent)
+        for s in settled:
+            if s.poster in conserving and s.worker in conserving:
+                flag(s, "conservation")
 
         # ---- pass-rate anomaly ----------------------------------------------
         # High-volume, perfectly-passing pairs that are also mutually concentrated
@@ -164,29 +219,25 @@ class WashDetector:
         pair_outcomes: dict[tuple[str, str], list[bool]] = {}
         for s in settlements:  # includes failed verifications: the denominator matters
             pair_outcomes.setdefault(tuple(sorted((s.poster, s.worker))), []).append(s.passed)
-        pair_ns = [len(v) for v in pair_outcomes.values()]
+        pair_ns = [float(len(v)) for v in pair_outcomes.values()]
         if len(pair_ns) >= 8:
-            mean_n = sum(pair_ns) / len(pair_ns)
-            sd_n = math.sqrt(sum((n - mean_n) ** 2 for n in pair_ns) / len(pair_ns))
-            if sd_n > 0:
-                for pair in sorted(pair_outcomes):
-                    outcomes = pair_outcomes[pair]
-                    a, b = pair
-                    if a not in per_agent_total or b not in per_agent_total:
-                        continue
-                    bidirectional = (pair_value.get((a, b), 0) > 0
-                                     and pair_value.get((b, a), 0) > 0)
-                    mutual_share = min(len(outcomes) / per_agent_total[a],
-                                       len(outcomes) / per_agent_total[b])
-                    z = (len(outcomes) - mean_n) / sd_n
-                    if (bidirectional
-                            and z >= self.cfg["pass_rate_z"]
-                            and len(outcomes) >= self.cfg["repeat_pair_min"]
-                            and mutual_share >= self.cfg["repeat_pair_share"] / 2
-                            and sum(outcomes) / len(outcomes) >= 0.98):
-                        for s in settled:
-                            if tuple(sorted((s.poster, s.worker))) == pair:
-                                flag(s, "pass_anomaly")
+            for pair in sorted(pair_outcomes):
+                outcomes = pair_outcomes[pair]
+                a, b = pair
+                if a not in per_agent_total or b not in per_agent_total:
+                    continue
+                bidirectional = (pair_value.get((a, b), 0) > 0
+                                 and pair_value.get((b, a), 0) > 0)
+                mutual_share = min(len(outcomes) / per_agent_total[a],
+                                   len(outcomes) / per_agent_total[b])
+                if (bidirectional
+                        and robust_z(len(outcomes), pair_ns) >= self.cfg["pass_rate_z"]
+                        and len(outcomes) >= self.cfg["repeat_pair_min"]
+                        and mutual_share >= self.cfg["repeat_pair_share"] / 2
+                        and sum(outcomes) / len(outcomes) >= 0.98):
+                    for s in settled:
+                        if tuple(sorted((s.poster, s.worker))) == pair:
+                            flag(s, "pass_anomaly")
 
         reasons = [r for rs in flags.values() for r in rs]
         return {
@@ -194,5 +245,6 @@ class WashDetector:
             "circular": sum(1 for r in reasons if r.startswith("circular")),
             "repeat_pair": reasons.count("repeat_pair"),
             "trivial_spam": reasons.count("trivial_spam"),
+            "conservation": reasons.count("conservation"),
             "pass_anomaly": reasons.count("pass_anomaly"),
         }

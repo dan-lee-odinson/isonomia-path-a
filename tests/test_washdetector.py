@@ -9,7 +9,25 @@ DET_CFG = {
     "repeat_pair_share": 0.25, "repeat_pair_min": 8,
     "trivial_size_quantile": 0.10, "trivial_rate_z": 3.0,
     "trivial_min_share": 0.50, "trivial_min_count": 5, "pass_rate_z": 3.0,
+    "conserve_min_settlements": 8, "conserve_net_ratio": 0.12,
+    "conserve_top_share": 0.70,
 }
+
+
+def test_long_ring_caught_by_conservation_signature():
+    # A 12-agent ring (i pays i+1) evades 2/3-cycle checks and pairwise
+    # concentration — but every member's inflow equals its outflow, and mutual
+    # credit forces exactly that. All ring settlements get flagged.
+    ring = []
+    eid = 800
+    for round_ in range(5):
+        for i in range(12):
+            ring.append(rec(eid, f"r{i:02d}", f"r{(i + 1) % 12:02d}", quote=3_000, size=0.15))
+            eid += 1
+    records = dispersed_honest() + ring
+    counts = WashDetector(DET_CFG).scan(records)
+    assert counts["conservation"] >= len(ring)
+    assert all(s.wash_flagged for s in ring)
 
 
 def rec(eid, poster, worker, quote=20_000, size=1.0, passed=True):

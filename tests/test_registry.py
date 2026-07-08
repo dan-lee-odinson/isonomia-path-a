@@ -11,6 +11,7 @@ ACT_CFG = {
     "fee_convergence_epochs": 3, "fee_convergence_band": 0.20,
     "min_principals": 40, "principal_share_cap": 0.15,
     "pair_share_cap": 0.02, "min_origin_principals": 25,
+    "wash_challenge_threshold": 10,
 }
 
 
@@ -124,6 +125,25 @@ def test_activation_requires_all_gates():
     registry2.process_settlements(records)
     status2 = registry2.activation_status(epoch=10, fee_convergence_streak=2)
     assert not status2["activated"]
+
+
+def test_challenged_agents_stop_advancing_the_clock():
+    """LS §9: exclusion of the affected AGENTS while a challenge is unresolved.
+    Ten review-upheld wash flags challenge the agent; afterwards even its clean
+    cross-principal, cross-family settlements are unqualified (DECISIONS #27)."""
+    registry = make_registry()
+    flagged = [settlement(poster_p="PX", worker_p=f"Q{i:02d}", washed=True, eid=i)
+               for i in range(10)]
+    for i, s in enumerate(flagged):
+        s.poster = "ring_a"          # the same agent accrues all ten strikes
+        s.worker = f"w{i:02d}"       # ...its counterparties accrue one each
+    registry.process_settlements(flagged)
+    assert "ring_a" in registry.challenged
+    clean = settlement(poster_p="PY", worker_p="QZ", eid=99)
+    clean.poster = "ring_a"
+    assert not registry.qualifies(clean)
+    other = settlement(poster_p="PY", worker_p="QZ", eid=100)
+    assert registry.qualifies(other)
 
 
 def test_kleos_awards_and_decay():

@@ -155,8 +155,44 @@ class Model:
         """Returns (defaults, socialized_mergs) this epoch."""
         return policies.process_exits(self, epoch, rng)
 
+    # ---- scenario extension points (Sim Plan §5) --------------------------
+    # Attack scenarios subclass Model and override these; the base model is the
+    # honest economy and does nothing here.
+
+    def scenario_on_epoch_start(self, epoch: int) -> None:
+        return
+
+    def scenario_on_epoch_end(self, epoch: int) -> None:
+        return
+
+    # Policies whose settlements are actually structured self-dealing; the LS §9
+    # Auditor review stub (DECISIONS #24) treats only these as true wash. A patient
+    # attacker (scenario 7) does genuine work — its flags are honest-false-positives.
+    WASH_POLICIES = ("adv_wash", "adv_sybil")
+
+    def withdrawal_probability(self, record) -> float:
+        """Per-escrow withdrawal probability; scenarios override (e.g. griefers
+        always withdraw)."""
+        return self.economy["poster_withdrawal_rate"]
+
+    def register_agent(self, agent: Agent, epoch: int) -> None:
+        """Mid-run registration (registration remains open continuously, LS §4).
+        The newcomer bonds, examines against the live basket, and lists."""
+        agent.registered_epoch = epoch
+        self.agents_list.append(agent)
+        self.agents[agent.id] = agent
+        self.ledger.register(agent.id)
+        self.registry.register(agent)
+        self.basket.examine(agent)
+        agent.rate_mergs = policies.initial_rate(agent)
+        # capacity_tasks == 0 means the registrant does not list (poster-only
+        # cohorts); set_listing treats sub-minimum capacity as delisted.
+        self.listing.set_listing(agent.id, agent.rate_mergs, agent.capacity_tasks)
+        self.ledger.refresh_lines(epoch, [agent.id])
+
     def step(self, epoch: int) -> None:
         params = self.params
+        self.scenario_on_epoch_start(epoch)
         # 1. credit lines from demonstrated flow (WP §4.5)
         active_ids = [a.id for a in self.agents_list if a.active]
         self.ledger.refresh_lines(epoch, active_ids)
@@ -204,8 +240,22 @@ class Model:
             wave_funded: list[tuple] = []
             wave_unmatched = 0
             for task in task_list:
-                worker_id = self.listing.cheapest_eligible(task.size_units, task.band, self.agents,
-                                                           exclude=task.poster, quality_of=quality_of)
+                if task.directed_to:
+                    # The poster names its worker (x402 posters choose their
+                    # server); the worker must still be listed, unsuspended,
+                    # band-eligible, and have envelope headroom.
+                    worker_id = task.directed_to
+                    listing = self.listing.get(worker_id)
+                    agent = self.agents.get(worker_id)
+                    quote_est = int(listing.rate * task.size_units) if listing else 0
+                    if (listing is None or listing.suspended or agent is None
+                            or not agent.active or agent.max_band < task.band
+                            or worker_id == task.poster
+                            or self.listing.headroom(worker_id) < quote_est):
+                        worker_id = None
+                else:
+                    worker_id = self.listing.cheapest_eligible(task.size_units, task.band, self.agents,
+                                                               exclude=task.poster, quality_of=quality_of)
                 if worker_id is None:
                     wave_unmatched += 1
                     continue
@@ -231,7 +281,7 @@ class Model:
         withdraw_rng = self.hub.stream(f"withdraw.e{epoch}")
         in_flight = []
         for record, task in funded:
-            if withdraw_rng.random() < self.economy["poster_withdrawal_rate"]:
+            if withdraw_rng.random() < self.withdrawal_probability(record):
                 fee = self.escrow.withdraw(record, capacity=self.listing)
                 self.agents[record.worker].epoch_earned_mergs += fee
             else:
@@ -300,8 +350,8 @@ class Model:
         for s in settlements:
             if not (s.wash_flagged and s.passed):
                 continue
-            adversarial = (self.agents[s.poster].policy.startswith("adv_")
-                           or self.agents[s.worker].policy.startswith("adv_"))
+            adversarial = (self.agents[s.poster].policy in self.WASH_POLICIES
+                           or self.agents[s.worker].policy in self.WASH_POLICIES)
             if adversarial:
                 if review_rng.random() > params.auditor_sensitivity:
                     s.wash_flagged = False  # review wrongly clears the wash trade
@@ -331,10 +381,11 @@ class Model:
 
         # 12. kleos decay + policy snapshots + metrics + invariants
         self.registry.decay_kleos()
+        self.settlements_by_epoch.append(settlements)
+        self.scenario_on_epoch_end(epoch)  # sees this epoch's settlements; before counters reset
         policies.capture_epoch_economics(self)
         rates_now = self.listing.active_rates()
         self.last_mean_rate = int(sum(rates_now) / len(rates_now)) if rates_now else 0
-        self.settlements_by_epoch.append(settlements)
         self._check_invariants(epoch)
         self._emit_epoch_row(
             epoch=epoch, n_active=n_active, tasks_posted=len(tasks), unmatched=unmatched,

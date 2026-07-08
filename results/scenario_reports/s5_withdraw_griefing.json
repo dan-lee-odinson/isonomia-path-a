@@ -1,0 +1,27 @@
+{
+  "measures": {
+    "grief_withdrawals": 359,
+    "griefer_net_spend_ergs": 136.943,
+    "invariant_violations": 0,
+    "victim_income_ratio_vs_twin": {
+      "a0006": 0.9776,
+      "a0092": 0.8105,
+      "a0124": 1.1683,
+      "a0205": 0.5892
+    },
+    "victim_income_variance_ratio": {
+      "a0006": 0.618,
+      "a0092": 1.063,
+      "a0124": 1.315,
+      "a0205": 3.28
+    },
+    "victims": [
+      "a0205",
+      "a0124",
+      "a0092",
+      "a0006"
+    ]
+  },
+  "scenario": "s5_withdraw_griefing",
+  "title": "S5 \u2014 Fund-and-withdraw griefing"
+}

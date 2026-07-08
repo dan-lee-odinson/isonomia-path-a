@@ -1,0 +1,17 @@
+{
+  "measures": {
+    "cohort_size": 120,
+    "drag_settlements_won": 157,
+    "invariant_violations": 0,
+    "mean_difficulty_attack": 0.1899,
+    "mean_difficulty_twin": 0.1954,
+    "retired_attack": 120,
+    "retired_twin": 120,
+    "scu_drift_abs": 0.00554,
+    "scu_drift_within_delta": true,
+    "scu_index_attack": 0.313999,
+    "scu_index_twin": 0.319539
+  },
+  "scenario": "s2_median_drag",
+  "title": "S2 \u2014 Median-drag swarm"
+}

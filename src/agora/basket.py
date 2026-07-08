@@ -77,7 +77,11 @@ class Basket:
         self.reserve = [
             make(bcfg["n_templates"] + i, population_median_skill + 0.5) for i in range(n_reserve)
         ]
-        self.scu_index = 1.0
+        # SCU proxy index: additive on the difficulty (logit-location) scale,
+        # starting at 0. Difficulty is a location parameter that can sit near or
+        # below zero, so a multiplicative link is ill-defined; the chain-link
+        # accumulates level SHIFTS of the active set (DECISIONS #20).
+        self.scu_index = 0.0
         self.retarget_log: list[dict] = []
         self._task_counter = 0
         self._rebuild_bands()
@@ -165,27 +169,32 @@ class Basket:
     def retarget(self, epoch: int, retire_threshold: float, min_obs: int = 8) -> dict:
         """The single scheduled retarget (LS §5.4): retire saturated templates
         (activity-weighted pass > threshold, with enough observations to know),
-        admit reserve, chain-link the SCU index over the overlap set."""
+        admit reserve, chain-link the SCU index over the overlap set.
+
+        Retarget DAMPING (WP §16 step 3: "retarget damping caps per-epoch basket
+        movement"): retirement is bounded by reserve availability so the basket
+        never shrinks — the measuring rod must stay the same length to stay a
+        measuring rod. When more templates saturate than reserves exist, the
+        most-saturated retire first and the rest wait for the next retarget."""
         before = self.mean_active_difficulty()
+        saturated = [t for t in self._active_list
+                     if t.obs >= min_obs and t.pass_rate() > retire_threshold]
+        saturated.sort(key=lambda t: (-t.pass_rate(), t.id))
+        reserve_available = [t for t in self.reserve if t.active]
         retired = []
-        for template in self._active_list:
-            if template.obs >= min_obs and template.pass_rate() > retire_threshold:
-                template.active = False
-                retired.append(template.id)
+        for template in saturated[:len(reserve_available)]:
+            template.active = False
+            retired.append(template.id)
         admitted = []
-        for template in self.reserve:
-            if len(retired) <= len(admitted):
-                break
-            if not template.active:
-                continue
+        for template in reserve_available[:len(retired)]:
             self.templates.append(template)
             admitted.append(template.id)
         self.reserve = [t for t in self.reserve if t.id not in set(admitted)]
         self._rebuild_bands()
         after = self.mean_active_difficulty()
-        # Chain-link: the SCU proxy index accumulates the relative difficulty
-        # movement of the active set (DECISIONS #20).
-        self.scu_index *= after / before if before else 1.0
+        # Chain-link: the SCU proxy accumulates the level shift of the active
+        # set's difficulty (additive on the logit scale; DECISIONS #20).
+        self.scu_index += after - before
         result = {
             "epoch": epoch,
             "retired": len(retired),

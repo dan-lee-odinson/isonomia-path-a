@@ -1,0 +1,61 @@
+{
+  "measures": {
+    "end_capacity": {
+      "a0006": 3,
+      "a0035": 9,
+      "a0072": 23,
+      "a0076": 24,
+      "a0080": 24,
+      "a0154": 24,
+      "a0175": 4,
+      "a0224": 1
+    },
+    "invariant_violations": 0,
+    "listing_fees_paid_ergs": {
+      "a0006": 15.81,
+      "a0035": 24.683,
+      "a0072": 26.734,
+      "a0076": 27.502,
+      "a0080": 18.712,
+      "a0154": 22.868,
+      "a0175": 21.348,
+      "a0224": 15.148
+    },
+    "peak_capacity": {
+      "a0006": 15,
+      "a0035": 14,
+      "a0072": 24,
+      "a0076": 24,
+      "a0080": 24,
+      "a0154": 24,
+      "a0175": 14,
+      "a0224": 14
+    },
+    "post_flood_mean_capacity_adaptive": 18.75,
+    "post_flood_mean_capacity_honest": 10.73,
+    "targets_adaptive": [
+      "a0035",
+      "a0072",
+      "a0080",
+      "a0154"
+    ],
+    "targets_honest": [
+      "a0224",
+      "a0076",
+      "a0175",
+      "a0006"
+    ],
+    "twin_end_capacity": {
+      "a0006": 13,
+      "a0035": 1,
+      "a0072": 24,
+      "a0076": 24,
+      "a0080": 24,
+      "a0154": 24,
+      "a0175": 1,
+      "a0224": 21
+    }
+  },
+  "scenario": "s6_listing_fee_bleed",
+  "title": "S6 \u2014 Listing-fee bleed attack"
+}

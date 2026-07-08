@@ -112,6 +112,9 @@ detector:                    # WashDetector thresholds (LS §9; tunable per Sim 
   trivial_min_share: 0.50    # ...if trivial tasks also dominate the agent's trade
   trivial_min_count: 8       # ...with at least this many trivial settlements
   pass_rate_z: 3.0           # pair pass-rate anomaly z-score to flag
+  conserve_min_settlements: 8  # gross settlements (both sides) before the net-flow test applies
+  conserve_net_ratio: 0.12   # |in − out| / gross at or below this AND...
+  conserve_top_share: 0.70   # ...top-3 counterparties ≥ this share = conservation-flagged
 
 activation:                  # LS §9 governance-activation thresholds
   min_agents: 150
@@ -122,3 +125,4 @@ activation:                  # LS §9 governance-activation thresholds
   principal_share_cap: 0.15
   pair_share_cap: 0.02
   min_origin_principals: 25
+  wash_challenge_threshold: 10  # review-upheld wash flags before an agent is challenged (LS §9 exclusion)

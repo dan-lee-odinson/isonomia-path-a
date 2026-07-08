@@ -113,10 +113,30 @@ discrete-epoch model every escrow resolves within its funding epoch, so no cross
 reservation state exists. *Interprets:* LS §7, §13.4.
 
 **#20 — SCU proxy and chain-linking.** The launch runs one category, so the sim's SCU measure
-is the mean difficulty of the active basket; the chain-link index accumulates its relative
-movement at retargets (index *= after/before). This is exactly the quantity the median-drag
-scenario must show is damped — richer SCU machinery (cross-category chain-linking) has nothing
-to link at Tier 1. *Interprets:* WP §4.3, LS §5.4; Sim Plan §5.2 "measure SCU drift".
+is the mean difficulty of the active basket. Difficulty is a location parameter on the logit
+scale (it legitimately sits near or below zero), so the chain-link index is *additive*:
+index += (after − before) at each retarget, starting at 0. Drift converts to the pass-rate
+scale via the logistic slope (Δpass ≈ 0.25 · κ · Δdifficulty at center) for comparison with
+the δ band. Richer SCU machinery has nothing to link at Tier 1. *Interprets:* WP §4.3, LS §5.4;
+Sim Plan §5.2 "measure SCU drift".
+
+**#25 — Retarget damping is reserve-bounded, worst-first.** LS §5.4 admits "pre-committed
+reserve templates"; WP §16 (step 3) names "retarget damping caps per-epoch basket movement" as
+a defense. Composition: retirements per retarget are capped at reserve availability so the
+600-template basket never shrinks (the measuring rod keeps its length); when more templates
+saturate than reserves exist, the highest pass rates retire first and the rest await the next
+retarget. *Interprets:* LS §5.4; WP §4.3, §16.
+
+**#26 — Conservation-ring detection is the settlement-graph correlation report.** LS §9's
+clustering reports include "settlement-graph correlation". The sim implements the mutual-credit
+form: an agent with high gross flow whose inflow ≈ outflow (|net|/gross ≤ 12%) is
+conservation-flagged *when its trade is also concentrated* (top-3 counterparties ≥ 70% of its
+settlements); settlements between two conservation-flagged agents are wash-flagged. Rationale:
+a wash ring on collateralized floors *must* recycle what it receives every epoch — near-zero
+net at high gross is wash's balance-sheet identity under mutual credit — but a fully-circulating
+honest economy also nets near zero *against the whole market*, so the distinguisher is balance
+against a tiny counterparty set. Catches long rings that evade pairwise-cycle and per-agent
+threshold checks. *Interprets:* LS §9; WP §4.1.
 
 **#21 — Counterparty-pair caps at principal granularity.** LS §9's "no single counterparty
 *pair* for >2%" is read as a pair of disclosed operator principals (the sentence's subject is
@@ -152,6 +172,15 @@ sensitivity (ground truth known to the sim, exactly as with seeded faults). The 
 publish raw flags (detector calibration) and the post-review residual (the system-level
 cost honest agents actually bear). Settlements whose flags survive review stay unqualified
 and are removed from credit-line turnover. *Interprets:* LS §9; Sim Plan §2, §4.
+
+**#27 — Challenge-and-exclusion at the agent level.** LS §9 enforces the principal floor "by
+challenge-plus-exclusion": *agents* under unresolved challenge are excluded from activation
+counts. Sim realization: review-upheld wash flags accrue per-agent strikes; at 10 strikes the
+agent is challenged and every settlement it touches stops advancing the clock permanently
+(the sim has no resolution process to model). Ten review-upheld strikes at a 90%-accurate
+review implies ~100 raw flags for an honest agent — orders of magnitude above the honest
+baseline residual — so honest agents effectively never trip it, while ring members trip it
+within an epoch or two. *Interprets:* LS §9; Sim Plan §5.1.
 
 **#17 — Exam and initial banding.** Each registrant's Prong-1 exam (40 basket draws, LS §5.2)
 runs at registration against the live basket; the score seeds the Bayesian rating prior

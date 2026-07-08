@@ -41,6 +41,11 @@ class Registry:
         self.activation_epoch = 0  # 0 = not yet activated
         # per-epoch worker activity (for activity-weighted statistics)
         self.epoch_activity: dict[str, int] = {}
+        # LS §9 challenge-and-exclusion: agents accumulating review-upheld wash
+        # flags are challenged, and challenged agents' settlements stop counting
+        # toward activation entirely (DECISIONS #27).
+        self.wash_strikes: dict[str, int] = {}
+        self.challenged: set[str] = set()
 
     # ------------------------------------------------------------------ identity
 
@@ -63,7 +68,8 @@ class Registry:
 
     def qualifies(self, s: SettlementRecord) -> bool:
         """Candidate qualification (LS §9): different principals, different lineage
-        clusters, not wash-flagged. Caps are applied at aggregation, not here."""
+        clusters, not wash-flagged, no challenged party. Caps are applied at
+        aggregation, not here."""
         if not s.passed:
             return False
         if s.poster_principal == s.worker_principal:
@@ -72,10 +78,24 @@ class Registry:
             return False
         if s.wash_flagged:
             return False
+        if s.poster in self.challenged or s.worker in self.challenged:
+            return False
         return True
 
     def process_settlements(self, settlements: list[SettlementRecord]) -> dict:
-        """Fold one epoch's settlements into the cumulative activation tallies."""
+        """Fold one epoch's settlements into the cumulative activation tallies.
+        Settlements arrive AFTER Auditor review (DECISIONS #24), so surviving
+        wash flags are review-upheld: they accrue strikes, and an agent crossing
+        the strike threshold is challenged — every settlement it touches stops
+        advancing the clock from then on (LS §9 exclusion-pending-resolution;
+        DECISIONS #27)."""
+        threshold = self.acfg["wash_challenge_threshold"]
+        for s in settlements:
+            if s.wash_flagged and s.passed:
+                for party in (s.poster, s.worker):
+                    self.wash_strikes[party] = self.wash_strikes.get(party, 0) + 1
+                    if self.wash_strikes[party] >= threshold:
+                        self.challenged.add(party)
         qualified = 0
         self.epoch_activity = {}
         for s in settlements:

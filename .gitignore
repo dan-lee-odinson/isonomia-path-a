@@ -13,6 +13,7 @@ results/*
 !results/scenario_reports/
 results/scenario_reports/*
 !results/scenario_reports/*.md
+!results/scenario_reports/*.json
 !results/sweep_reports/
 results/sweep_reports/*
 !results/sweep_reports/*.md
