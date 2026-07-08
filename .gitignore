@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+*.egg-info/
+
+# Simulation outputs: per-epoch logs stay local; summary reports are committed.
+results/*
+!results/README.md
+!results/**/summary*.md
+!results/**/summary*.json
+!results/scenario_reports/
+results/scenario_reports/*
+!results/scenario_reports/*.md
+!results/sweep_reports/
+results/sweep_reports/*
+!results/sweep_reports/*.md
+!results/sweep_reports/*.json
+
+# OS / editor noise
+Thumbs.db
+.DS_Store
+.vscode/
+.idea/
