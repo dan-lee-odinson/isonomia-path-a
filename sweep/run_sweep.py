@@ -183,15 +183,26 @@ def main() -> int:
             for i, point in enumerate(points) for seed in seeds for variant in variants]
     workers = sweep_cfg.get("workers") or max(1, (os.cpu_count() or 4) - 2)
     print(f"{len(points)} LHS points x {len(seeds)} seeds x {len(variants)} variants "
-          f"= {len(jobs)} runs on {workers} workers")
+          f"= {len(jobs)} runs on {workers} workers", flush=True)
+
+    # Incremental checkpoint: every completed run is appended immediately, so a
+    # killed sweep (power loss, session teardown) leaves salvageable data
+    # instead of an empty memory. The .jsonl stays out of git (not allowlisted).
+    out_dir = REPO_ROOT / "results" / "sweep_reports"
+    out_dir.mkdir(parents=True, exist_ok=True)
+    runs_log_path = out_dir / f"{sweep_cfg['name']}_runs.jsonl"
 
     start = time.perf_counter()
     results = []
-    with concurrent.futures.ProcessPoolExecutor(max_workers=workers) as pool:
-        for k, result in enumerate(pool.map(run_one, jobs, chunksize=4), 1):
-            results.append(result)
-            if k % 50 == 0 or k == len(jobs):
-                print(f"  {k}/{len(jobs)} runs, {time.perf_counter() - start:.0f}s elapsed")
+    with open(runs_log_path, "w", encoding="utf-8", newline="\n") as runs_log:
+        with concurrent.futures.ProcessPoolExecutor(max_workers=workers) as pool:
+            for k, result in enumerate(pool.map(run_one, jobs, chunksize=4), 1):
+                results.append(result)
+                runs_log.write(json.dumps(result, sort_keys=True) + "\n")
+                runs_log.flush()
+                if k % 50 == 0 or k == len(jobs):
+                    print(f"  {k}/{len(jobs)} runs, {time.perf_counter() - start:.0f}s elapsed",
+                          flush=True)
     elapsed = time.perf_counter() - start
 
     # ---- aggregate --------------------------------------------------------
@@ -225,8 +236,6 @@ def main() -> int:
             for i in range(len(points))
         ],
     }
-    out_dir = REPO_ROOT / "results" / "sweep_reports"
-    out_dir.mkdir(parents=True, exist_ok=True)
     name = sweep_cfg["name"]
     with open(out_dir / f"{name}_summary.json", "w", encoding="utf-8", newline="\n") as fh:
         json.dump(report, fh, indent=2, sort_keys=True)
