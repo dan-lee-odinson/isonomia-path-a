@@ -41,6 +41,25 @@ def test_sustained_superlinear_growth_after_grace_trips():
     assert verdict["any_tripped"]
 
 
+def test_accelerating_transient_below_magnitude_floor_does_not_trip():
+    # The full sweep's worst shock-recovery transient accumulated 0.38 log-points
+    # over its streak (45,000 runs); an accelerating 8%/10%/12% wobble (cum 0.28)
+    # satisfies margin + convexity but is noise, not a spiral (DECISIONS #29).
+    credit = [100] * 8 + [108.0, 118.8, 133.1, 133.5]
+    volume = [1000.0] * 12
+    verdict = evaluate(make_rows(credit, volume), [], grace_epochs=7)
+    assert not verdict["supply_superlinear"]["tripped"]
+
+
+def test_compounding_spiral_crosses_the_floor_and_trips():
+    # Sustained 20%/epoch compounding accumulates 0.55 log-points in 3 epochs —
+    # past the 0.5 floor, and the doubling case (2.08) is far past it.
+    credit = [100] * 8 + [120.0, 144.0, 172.8, 207.4]
+    volume = [1000.0] * 12
+    verdict = evaluate(make_rows(credit, volume), [], grace_epochs=7)
+    assert verdict["supply_superlinear"]["tripped"]
+
+
 def test_fast_but_decelerating_growth_is_equilibration_not_spiral():
     # Post-grace growth of 20%/15%/11%/8% against flat volume outgrows volume
     # but decelerates — an approach to plateau, not log-convex superlinearity.

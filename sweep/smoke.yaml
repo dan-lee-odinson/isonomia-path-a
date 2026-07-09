@@ -9,5 +9,5 @@ n_seeds: 3
 first_seed: 42
 epochs: 26
 shock_variants: true       # ±50% inflow for 2 epochs in every sweep (Sim Plan §3)
-neighbor_radius: 0.9       # normalized-cube L2 radius for the connectivity estimate
+connectivity_k: 3          # mutual-kNN contiguity estimator (radius is meaningless in 10-D)
 workers: null              # null = cpu_count − 2

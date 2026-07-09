@@ -209,6 +209,23 @@ spec as "v0.2.3" while the operative launch spec is v0.3 — a doc-metadata nit 
 whitepaper patch, noted here rather than edited into a frozen document. *Interprets:* LS v0.3
 §10, Appendix A; WP v0.4.
 
+**#29 — Supply-criterion magnitude floor (criterion v2), set by the full sweep.** The
+45,000-run full sweep exposed a second defect in the supply kill-criterion: margin +
+convexity alone has a ~5% per-run false-positive rate (2,299 trips, all supply-class, spread
+uniformly across parameter space — no tercile of any swept dimension moves the rate — and
+concentrated 63% in shock-up variants). Deterministic re-execution of every tripped run
+measured the streaks: median cumulative Δlog(credit) 0.14, p99 0.26, maximum 0.38, with
+credit never exceeding 22% of its structural ceiling (n_agents × L_cap) — shock-recovery
+transients, not spirals. Even the launch-center configuration tripped 6/150 runs. v2 adds a
+materiality floor: the accelerating streak must also accumulate ≥ 0.5 log-points (+65%) of
+credit growth. 0.5 sits ~30% above the worst transient ever observed and far below any real
+spiral (20%/epoch compounding = 0.55 in three epochs; doubling = 2.08). Production
+translation: without the floor, an honest exchange accumulates ~5%/year probability of
+spuriously halting itself. The floor only tightens the criterion, so untripped runs are
+unaffected (monotonicity) — the full sweep re-evaluation under v2 re-runs only the 2,299
+v1-tripped runs. Carry into the next Launch Spec §10 revision alongside #28's wording fix.
+*Interprets:* LS v0.3 §10; Sim Plan §6.
+
 **#17 — Exam and initial banding.** Each registrant's Prong-1 exam (40 basket draws, LS §5.2)
 runs at registration against the live basket; the score seeds the Bayesian rating prior
 (k = 25, WP §7.2) and difficulty-band eligibility. Foundation reference agents are not modeled

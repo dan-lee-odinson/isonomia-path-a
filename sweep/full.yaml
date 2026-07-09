@@ -9,5 +9,5 @@ n_seeds: 50
 first_seed: 42
 epochs: 26
 shock_variants: true
-neighbor_radius: 0.55      # tighter neighborhoods at 5× point density
+connectivity_k: 3          # mutual-kNN contiguity estimator (radius is meaningless in 10-D)
 workers: null

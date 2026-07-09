@@ -125,31 +125,44 @@ def normalized(point: dict) -> list[float]:
     return coords
 
 
-def largest_stable_component(points: list[dict], stable: list[bool], radius: float) -> float:
-    """Union-find over stable points; edges where L2 distance < radius in the
-    normalized cube. Returns the largest component's share of ALL points."""
+def largest_stable_component(points: list[dict], stable: list[bool], k: int = 3) -> float:
+    """Share of ALL swept points inside the largest mutual-kNN component of the
+    stable points. Contiguity is judged by neighbor graphs, not distance
+    thresholds: in a 10-dimensional cube pairwise distances concentrate, so any
+    fixed radius either isolates every point or connects all of them — the
+    kNN graph is the scale-free estimator of whether stability clusters into
+    one region or shatters into islands."""
     idx = [i for i, s in enumerate(stable) if s]
     if not idx:
         return 0.0
+    if len(idx) == 1:
+        return 1 / len(points)
     coords = {i: normalized(points[i]) for i in idx}
-    parent = {i: i for i in idx}
-
-    def find(i):
-        while parent[i] != i:
-            parent[i] = parent[parent[i]]
-            i = parent[i]
-        return i
-
-    for a_pos, a in enumerate(idx):
-        for b in idx[a_pos + 1:]:
-            dist = math.sqrt(sum((x - y) ** 2 for x, y in zip(coords[a], coords[b])))
-            if dist < radius:
-                parent[find(a)] = find(b)
-    sizes: dict[int, int] = {}
-    for i in idx:
-        root = find(i)
-        sizes[root] = sizes.get(root, 0) + 1
-    return max(sizes.values()) / len(points)
+    edges: dict[int, set[int]] = {i: set() for i in idx}
+    for a in idx:
+        nearest = sorted(
+            (sum((x - y) ** 2 for x, y in zip(coords[a], coords[b])), b)
+            for b in idx if b != a
+        )[:k]
+        for _, b in nearest:
+            edges[a].add(b)
+            edges[b].add(a)
+    seen: set[int] = set()
+    best = 0
+    for start in idx:
+        if start in seen:
+            continue
+        stack, size = [start], 0
+        seen.add(start)
+        while stack:
+            node = stack.pop()
+            size += 1
+            for nxt in edges[node]:
+                if nxt not in seen:
+                    seen.add(nxt)
+                    stack.append(nxt)
+        best = max(best, size)
+    return best / len(points)
 
 
 def sensitivity(points: list[dict], stable: list[bool]) -> dict:
@@ -215,7 +228,7 @@ def main() -> int:
         for reason in result["tripped_by"]:
             trip_reasons[reason] = trip_reasons.get(reason, 0) + 1
     stable_fraction = sum(stable) / len(points)
-    component = largest_stable_component(points, stable, sweep_cfg["neighbor_radius"])
+    component = largest_stable_component(points, stable, sweep_cfg.get("connectivity_k", 3))
 
     report = {
         "sweep_config": sweep_cfg,

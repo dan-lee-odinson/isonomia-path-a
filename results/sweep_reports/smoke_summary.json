@@ -1,6 +1,6 @@
 {
-  "elapsed_seconds": 456.5,
-  "largest_stable_component_share": 0.6333,
+  "elapsed_seconds": 180.6,
+  "largest_stable_component_share": 1.0,
   "n_points": 60,
   "n_runs": 540,
   "package_pass": true,
@@ -122,10 +122,8 @@
         "params.p_star": 0.417945,
         "params.settlement_fee_init": 0.023392
       },
-      "stable": false,
-      "tripped_by": [
-        "supply_superlinear"
-      ]
+      "stable": true,
+      "tripped_by": []
     },
     {
       "idx": 7,
@@ -209,10 +207,8 @@
         "params.p_star": 0.520014,
         "params.settlement_fee_init": 0.00291
       },
-      "stable": false,
-      "tripped_by": [
-        "supply_superlinear"
-      ]
+      "stable": true,
+      "tripped_by": []
     },
     {
       "idx": 12,
@@ -228,10 +224,8 @@
         "params.p_star": 0.389267,
         "params.settlement_fee_init": 0.025621
       },
-      "stable": false,
-      "tripped_by": [
-        "supply_superlinear"
-      ]
+      "stable": true,
+      "tripped_by": []
     },
     {
       "idx": 13,
@@ -332,10 +326,8 @@
         "params.p_star": 0.645306,
         "params.settlement_fee_init": 0.005105
       },
-      "stable": false,
-      "tripped_by": [
-        "supply_superlinear"
-      ]
+      "stable": true,
+      "tripped_by": []
     },
     {
       "idx": 19,
@@ -555,10 +547,8 @@
         "params.p_star": 0.463166,
         "params.settlement_fee_init": 0.013473
       },
-      "stable": false,
-      "tripped_by": [
-        "supply_superlinear"
-      ]
+      "stable": true,
+      "tripped_by": []
     },
     {
       "idx": 32,
@@ -744,10 +734,8 @@
         "params.p_star": 0.487236,
         "params.settlement_fee_init": 0.004314
       },
-      "stable": false,
-      "tripped_by": [
-        "supply_superlinear"
-      ]
+      "stable": true,
+      "tripped_by": []
     },
     {
       "idx": 43,
@@ -780,10 +768,8 @@
         "params.p_star": 0.517521,
         "params.settlement_fee_init": 0.020017
       },
-      "stable": false,
-      "tripped_by": [
-        "supply_superlinear"
-      ]
+      "stable": true,
+      "tripped_by": []
     },
     {
       "idx": 45,
@@ -850,10 +836,8 @@
         "params.p_star": 0.557196,
         "params.settlement_fee_init": 0.005031
       },
-      "stable": false,
-      "tripped_by": [
-        "supply_superlinear"
-      ]
+      "stable": true,
+      "tripped_by": []
     },
     {
       "idx": 49,
@@ -886,10 +870,8 @@
         "params.p_star": 0.554399,
         "params.settlement_fee_init": 0.003843
       },
-      "stable": false,
-      "tripped_by": [
-        "supply_superlinear"
-      ]
+      "stable": true,
+      "tripped_by": []
     },
     {
       "idx": 51,
@@ -922,10 +904,8 @@
         "params.p_star": 0.50228,
         "params.settlement_fee_init": 0.017735
       },
-      "stable": false,
-      "tripped_by": [
-        "supply_superlinear"
-      ]
+      "stable": true,
+      "tripped_by": []
     },
     {
       "idx": 53,
@@ -958,10 +938,8 @@
         "params.p_star": 0.59737,
         "params.settlement_fee_init": 0.013987
       },
-      "stable": false,
-      "tripped_by": [
-        "supply_superlinear"
-      ]
+      "stable": true,
+      "tripped_by": []
     },
     {
       "idx": 55,
@@ -1045,100 +1023,96 @@
         "params.p_star": 0.434343,
         "params.settlement_fee_init": 0.024578
       },
-      "stable": false,
-      "tripped_by": [
-        "supply_superlinear"
-      ]
+      "stable": true,
+      "tripped_by": []
     }
   ],
-  "seconds_per_run": 0.85,
+  "seconds_per_run": 0.33,
   "sensitivity": {
     "params.alpha": {
       "trip_rate_by_tercile_low_mid_high": [
-        0.25,
-        0.25,
-        0.1
+        0.0,
+        0.0,
+        0.0
       ]
     },
     "params.beta_listing": {
       "trip_rate_by_tercile_low_mid_high": [
-        0.1,
-        0.25,
-        0.25
+        0.0,
+        0.0,
+        0.0
       ]
     },
     "params.capacity_min_tasks": {
       "trip_rate_by_tercile_low_mid_high": [
-        0.15,
-        0.2,
-        0.25
+        0.0,
+        0.0,
+        0.0
       ]
     },
     "params.d_erg": {
       "trip_rate_by_tercile_low_mid_high": [
-        0.2,
-        0.1,
-        0.3
+        0.0,
+        0.0,
+        0.0
       ]
     },
     "params.k_prior": {
       "trip_rate_by_tercile_low_mid_high": [
-        0.25,
-        0.15,
-        0.2
+        0.0,
+        0.0,
+        0.0
       ]
     },
     "params.kleos_half_life_days": {
       "trip_rate_by_tercile_low_mid_high": [
-        0.2,
-        0.3,
-        0.1
+        0.0,
+        0.0,
+        0.0
       ]
     },
     "params.l_cap_mult": {
       "trip_rate_by_tercile_low_mid_high": [
-        0.15,
-        0.15,
-        0.3
+        0.0,
+        0.0,
+        0.0
       ]
     },
     "params.lambda_inherit": {
       "trip_rate_by_tercile_low_mid_high": [
-        0.2,
-        0.25,
-        0.15
+        0.0,
+        0.0,
+        0.0
       ]
     },
     "params.p_star": {
       "trip_rate_by_tercile_low_mid_high": [
-        0.15,
-        0.25,
-        0.2
+        0.0,
+        0.0,
+        0.0
       ]
     },
     "params.settlement_fee_init": {
       "trip_rate_by_tercile_low_mid_high": [
-        0.25,
         0.0,
-        0.35
+        0.0,
+        0.0
       ]
     }
   },
-  "stable_fraction": 0.8,
-  "stable_points": 48,
+  "stable_fraction": 1.0,
+  "stable_points": 60,
   "sweep_config": {
     "base_config": "configs/baseline.yaml",
+    "connectivity_k": 3,
     "epochs": 26,
     "first_seed": 42,
     "lhs_seed": 20260708,
     "n_points": 60,
     "n_seeds": 3,
     "name": "smoke",
-    "neighbor_radius": 0.9,
     "shock_variants": true,
     "workers": null
   },
-  "trip_reasons_run_level": {
-    "supply_superlinear": 13
-  }
+  "trip_reasons_run_level": {}
 }
