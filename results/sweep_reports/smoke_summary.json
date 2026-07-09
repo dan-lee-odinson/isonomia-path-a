@@ -1,5 +1,5 @@
 {
-  "elapsed_seconds": 180.6,
+  "elapsed_seconds": 181.3,
   "largest_stable_component_share": 1.0,
   "n_points": 60,
   "n_runs": 540,
@@ -1027,7 +1027,7 @@
       "tripped_by": []
     }
   ],
-  "seconds_per_run": 0.33,
+  "seconds_per_run": 0.34,
   "sensitivity": {
     "params.alpha": {
       "trip_rate_by_tercile_low_mid_high": [

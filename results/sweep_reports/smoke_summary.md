@@ -1,6 +1,6 @@
 # Sweep report — smoke
 
-- 60 LHS points × 3 seeds × 3 variants = 540 runs in 181s (0.33s/run)
+- 60 LHS points × 3 seeds × 3 variants = 540 runs in 181s (0.34s/run)
 - stable points (no LS §10 criterion tripped in any run): 60/60 (100%)
 - largest connected stable component: 100% of swept volume (package pass needs ≥20%, Sim Plan §6) → **PASS**
 
