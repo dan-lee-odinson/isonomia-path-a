@@ -1,9 +1,9 @@
-# AGORA Tier-1 Launch Specification
+# ISONOMIA Tier-1 Launch Specification
 
 **Minimum viable exchange: one task category, testnet settlement, full accounting, provisional governance**
 
-Version 0.3 — July 2026
-Companion to AGORA Whitepaper v0.4. Where this document and the whitepaper conflict, the whitepaper's constitution governs; all known divergences are listed in Appendix A (Conflict Register).
+Version 0.3.2 — July 2026
+Companion to ISONOMIA Whitepaper v0.6.1. Where this document and the whitepaper conflict, the whitepaper's constitution governs; all known divergences are listed in Appendix A (Conflict Register).
 
 **Status of all numeric parameters:** initial hypotheses, chosen for defensibility, to be tuned by Path A simulation before testnet deployment and re-ratified at governance activation. Every parameter in §8 is a named variable in the simulation plan.
 
@@ -144,7 +144,9 @@ Off-chain services (foundation-operated at launch, manifest-labeled): sandbox ex
 
 Published per epoch: net credit outstanding vs. settled volume (supply stability); default and loss-socialization rates; listing-price dispersion vs. delivered quality (Harberger convergence); dispute rate and jury overturn rate; fee trajectory; monoculture index; Auditor Brier scores; Adversary findings by class.
 
-**Kill criteria (any → halt and redesign before scale):** credit-to-volume ratio exhibiting **log-convex growth** (non-decreasing epoch-over-epoch growth rates — the signature of a runaway spiral rather than healthy bootstrap fill) sustained for 3 consecutive epochs after a bootstrap grace window (grace length simulation-derived; see repository killcriteria.py and CALIBRATION.md for the operative formulation, which is authoritative); default socialization > 5% of volume; dispute rate > 10% of settlements; Auditor seeded-fault recall < 80%; any Adversary finding of class "settlement forgery" or "credit-line inflation."
+**Kill criteria (any → halt and redesign before scale):** credit-to-volume supply spiral detected by the **windowed excess-growth criterion (v3)** — a multi-scale windowed statistic E(W) measuring cumulative credit growth in excess of qualified (wash-filtered) volume growth, active-agent-normalized, over sliding windows (W=6 and W=12; W=3 dropped for honest/control distribution overlap), tripping above empirically-derived floors carrying a stated safety factor above honest noise; default socialization > 5% of volume; dispute rate > 10% of settlements; Auditor seeded-fault recall < 80%; any Adversary finding of class "settlement forgery" or "credit-line inflation." The repository's `killcriteria.py` is the operative formulation and `CALIBRATION.md` records the derived floors, separation margins, and detection latencies.
+
+**Criterion validation is itself constitutional (the standing rule).** A supply criterion validated only against honest data is not validated: Path A found that the naive superlinearity criterion (v1) would have halted every honest launch, and its first correction (v2) was structurally blind to real spirals — both would have shipped as law without adversarial testing of the criterion itself. Therefore: (a) any revision to the supply criterion must pass the full positive/negative control battery — negative controls (honest runs must not trip) *and* positive controls (scripted credit spirals and detection-disabled Sybil farming *must* trip, with reported latency) — before deployment; (b) the floor-derivation methodology is authoritative, not the floor values; and (c) **production floors are re-derived from testnet honest-noise data during the bootstrap grace window, never inherited from simulation.** The methodology transfers; the numbers do not. A CI calibration-lock fails any change to the detector or criterion that is not accompanied by a matching floor re-derivation.
 
 *Revision note (v0.3):* the original criterion — "credit outstanding growing superlinearly to volume for 3 epochs" — was found defective by Path A simulation: mutual-credit supply necessarily outgrows flat volume while filling from an empty ledger, so the naive criterion halts every honest launch (60/60 smoke-sweep points tripped it and nothing else). This is Path A's first concrete deliverable: a constitutional defect caught in simulation before it could be caught in production.
 
@@ -218,3 +220,15 @@ Known divergences between this launch implementation and the whitepaper constitu
 ## Changelog v0.2.3 → v0.3
 
 - §10 supply kill-criterion corrected per Path A simulation finding: naive superlinearity replaced by log-convex growth after a bootstrap grace window. The repository's killcriteria.py is the operative formulation. First empirically-driven revision of the spec.
+
+
+## Changelog v0.3 → v0.3.1 (rename)
+
+- Project renamed to ISONOMIA / The Isonomia Commons. No mechanical changes.
+
+
+## Changelog v0.3.1 → v0.3.2
+
+- §10 kill criteria updated from the v1 log-convexity formulation (found defective by Path A) to the certified v3 windowed excess-growth criterion: multi-scale windows (W=6, W=12), qualified-volume denominator, active-agent normalization, empirically-derived floors with safety factor. Certified over 45,000 runs, 300/300 points stable, 0 trips, with positive-control confirmation that it catches real spirals.
+- Added the standing rule: criterion revisions must pass positive AND negative controls; methodology is authoritative over values; production floors re-derived on testnet, never inherited from simulation; CI calibration-lock enforced.
+- Companion whitepaper reference updated to v0.6.1.

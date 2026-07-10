@@ -1,4 +1,4 @@
-# AGORA Feasibility Assessment
+# ISONOMIA Feasibility Assessment
 
 **Resources, costs, timeline, and risk for building the sovereign agent exchange**
 
@@ -8,7 +8,7 @@ Version 0.1 — July 2026
 
 ## 1. Executive summary
 
-AGORA is buildable with today's technology. Every component rests on infrastructure that exists and is maturing fast: x402 for payments (now Linux Foundation-stewarded, with Google, Visa, Stripe, AWS among founding members), Base or Solana as settlement layer, ERC-8004-style agent identity registries, Kleros-proven jury mechanics, and TEE attestation services. Nothing in the design requires a research breakthrough except cheap general verification of arbitrary inference (verifiable compute), which has viable interim substitutes (attestation, optimistic verification, redundancy sampling).
+ISONOMIA is buildable with today's technology. Every component rests on infrastructure that exists and is maturing fast: x402 for payments (now Linux Foundation-stewarded, with Google, Visa, Stripe, AWS among founding members), Base or Solana as settlement layer, ERC-8004-style agent identity registries, Kleros-proven jury mechanics, and TEE attestation services. Nothing in the design requires a research breakthrough except cheap general verification of arbitrary inference (verifiable compute), which has viable interim substitutes (attestation, optimistic verification, redundancy sampling).
 
 The honest headline numbers:
 
@@ -33,7 +33,7 @@ The single most important strategic fact: **the paths are sequential, and Path A
 | Moving basket / SCU | Novel | Build (the core original IP) |
 | Auditor / Adversary organs | Novel composition of known parts | Build (the second core original IP) |
 
-Roughly 70% of AGORA is assembly of existing, battle-tested parts. The genuinely novel engineering is concentrated in the SCU basket mechanism, the divergence-based reputation inheritance, and the seeded-fault watchmen — which is exactly where the intellectual property value is, too.
+Roughly 70% of ISONOMIA is assembly of existing, battle-tested parts. The genuinely novel engineering is concentrated in the SCU basket mechanism, the divergence-based reputation inheritance, and the seeded-fault watchmen — which is exactly where the intellectual property value is, too.
 
 ## 3. Path A — Simulation-first proof of concept
 
@@ -115,7 +115,7 @@ Note what dominates: audits + legal + bounties + reserve ≈ 40–55% of budget.
 2. **Verification cost (highest technical).** If verifying contributed compute costs a large fraction of the compute itself, staking economics collapse. Mitigation: optimistic verification with sampling keeps overhead low; monitor zkML cost curves.
 3. **Cold start (highest market).** A labor exchange needs workers and work simultaneously. Mitigation: seed with a single high-value vertical (e.g., code-review cascades or research pipelines) where one orchestrator generates task flow for many specialists — the cascade design conveniently makes demand self-amplifying.
 4. **Basket capture and watchman defection** — addressed in the whitepaper's limitations; both convert to *monitoring* costs in this budget (plurality of Auditor/Adversary instances is a recurring compute line, not a one-time build).
-5. **Incumbent absorption.** Coinbase, Google, or Virtuals could ship a shallow version of agent labor markets first. Mitigation: AGORA's differentiation is the constitutional layer (governance, watchmen, sovereignty), which incumbents are structurally unlikely to build because it forbids exactly the extractive position they would occupy.
+5. **Incumbent absorption.** Coinbase, Google, or Virtuals could ship a shallow version of agent labor markets first. Mitigation: ISONOMIA's differentiation is the constitutional layer (governance, watchmen, sovereignty), which incumbents are structurally unlikely to build because it forbids exactly the extractive position they would occupy.
 
 ## 8. Recommendation
 

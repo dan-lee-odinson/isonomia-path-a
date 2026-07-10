@@ -1,4 +1,4 @@
-# AGORA Path A Simulation Plan
+# ISONOMIA Path A Simulation Plan
 
 **Agent-based validation of the Tier-1 launch economics against the kill criteria**
 
