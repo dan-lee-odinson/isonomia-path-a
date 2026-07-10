@@ -5,7 +5,24 @@ the run — each item was documented, worked around, and the build continued.
 
 ## Open
 
-*(none)*
+- **Website publishing is deferred to the human by design (not a build blocker).** The public
+  site is staged in `site/` (`index.html`, `polis.html`, `llms.txt`) with all figures updated
+  to the final Path A numbers, but **GitHub Pages is intentionally not enabled** and the
+  `<!-- PUBLICATION GATE -->` comment is left in place. Two human decisions remain before go-live:
+  1. **DOI** — the Zenodo DOI is still "forthcoming"; the last publication-gate box cannot be
+     checked until it is minted. Mint it, then update the two `#` DOI placeholders (site footer
+     and, if desired, add to the docs).
+  2. **Serving topology** — classic GitHub Pages serves only from repo root or `/docs`, not from
+     an arbitrary `/site` folder. To publish `site/` either (a) add a Pages GitHub Actions
+     workflow that deploys `site/`, or (b) move the three files to the chosen Pages source at
+     publish time. Note that `llms.txt` follows the convention of living at the **served root**
+     and its `./docs/...` links resolve relative to that root — so whichever source is chosen,
+     `docs/` must be reachable as a sibling of `llms.txt` at the served root (a Pages workflow
+     can copy `docs/` alongside the site, or the links can be repointed to absolute repo URLs).
+
+  Spec↔code note (Step 4): Launch Spec v0.3.2 §10 mislabels detection-disabled Sybil farming as
+  a positive control; the code correctly treats it as a negative control (DECISIONS #35). Neither
+  was changed per the milestone constraint; the recommended one-line spec fix is in DECISIONS #35.
 
 ## Resolved
 
