@@ -307,6 +307,30 @@ population. This is a concrete instance of why production floors cannot be inher
 simulation (the standing caveat): the sim's static-population noise model missed a whole class
 of honest behavior until control E forced it into view. *Interprets:* LS §10, §4; Sim Plan §6.
 
+**#35 — Spec↔code divergence flagged at the ISONOMIA rename (Launch Spec v0.3.2 §10 control
+taxonomy).** Step-4 verification of Launch Spec v0.3.2 §10 against `killcriteria.py` found the
+criterion mechanics match exactly (windowed E(W) over W={6,12}, wash-filtered qualified
+denominator, active-agent normalization, W=3 excluded, 1.25×-derived floors, CI calibration-lock,
+standing rules b and c). **One divergence, not resolved here per the rename-milestone
+constraint (change neither code nor spec):** §10's standing rule (a) enumerates *"scripted
+credit spirals and detection-disabled Sybil farming must trip"* as the positive-control battery.
+The repository classifies detection-disabled Sybil farming (control B, `BlindSybilFarmControl`)
+as a **negative** control that correctly does **not** trip — established empirically in
+DECISIONS #31: under valid mutual-credit accounting credit-outstanding cannot exceed cumulative
+settled volume, and balanced rings net to zero in credit-outstanding (the diagnostic pins the
+farm cohort's aggregate negative balance flat all run), so ring-farming inflates *volume*, not
+credit *stock* — there is no spiral for the supply criterion to catch. Its harm (fake volume,
+activation-gaming) is the wash detector's and activation-qualification's domain, and the
+composed defense is demonstrated by control C (spiral + padding, detector on → trips) and the
+M5 S4 scenario (farming with detector on → extraction 0). The spec text — written from the M9
+summary — mislabels a negative control as a positive one; the code and its four certified
+controls (A/C/D positive, B negative) are ground truth. **Recommended spec fix (for the human,
+next §10 revision):** rule (a) should read "scripted credit spirals *must* trip (positive
+controls, with reported latency); detection-disabled Sybil farming *must not* trip the supply
+criterion (negative control — its defense is the wash detector, exercised with the detector
+enabled)." No mechanism or test changes; the certified control battery already implements the
+correct taxonomy. *Interprets:* LS v0.3.2 §10; DECISIONS #31.
+
 **#17 — Exam and initial banding.** Each registrant's Prong-1 exam (40 basket draws, LS §5.2)
 runs at registration against the live basket; the score seeds the Bayesian rating prior
 (k = 25, WP §7.2) and difficulty-band eligibility. Foundation reference agents are not modeled
