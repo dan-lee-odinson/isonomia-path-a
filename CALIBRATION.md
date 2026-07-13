@@ -1,8 +1,14 @@
 # Calibration — full-sweep results and the §8 parameter-registry recommendation
 
-Final memo per Sim Plan §7.2/§7.5, based on the executed **full sweep** (300 Latin-hypercube
+> **Revision note (claim discipline).** Stability language throughout this record has been corrected to describe sampled points rather than a continuous region. Three hundred Latin-hypercube samples establish results at the sampled points, not at every point in the continuous ten-dimensional parameter space. "Stable across the entire §4 parameter space / 100% contiguous region / full parameter space" → statements about the 300 sampled points forming one mutual-3-NN component; parameter-table "Stable across X–Y" → "No instability observed among sampled values spanning X–Y." The two 45,000-run sweeps (initial full sweep, 3.8 h; v3 out-of-sample re-certification, 5.9 h) are now named distinctly, and "carry into the next Launch Spec revision" is updated to "incorporated into Launch Spec v0.3.3 §10," which already contains the revised criterion.
+
+> **Evidence baseline.** All results in this document derive from repository release v1.0.0, commit `ba3ddb5`. Subsequent edits to this document change reporting language only; the underlying code, data, and simulation outputs are unchanged.
+
+
+Final memo per Sim Plan §7.2/§7.5, based on the executed **initial full sweep** (300 Latin-hypercube
 points × 50 seeds × 3 demand variants = 45,000 runs, 3.8 h wall on 14 workers) and the smoke
-sweep (60 × 3 × 3 = 540 runs). Attack-scenario evidence from `results/scenario_reports/`
+sweep (60 × 3 × 3 = 540 runs). A later **v3 out-of-sample re-certification** re-ran the same
+45,000-run grid under the final criterion (5.9 h wall; reported below). Attack-scenario evidence from `results/scenario_reports/`
 feeds the per-parameter verdicts.
 
 ## How to run
@@ -24,19 +30,15 @@ feeds the per-parameter verdicts.
 
 Reports land in `results/sweep_reports/<name>_summary.{md,json}`, with per-run checkpoints in
 `<name>_runs.jsonl` (survives a killed sweep; runs are seed-deterministic and individually
-re-executable). Contiguity is the largest mutual-3-NN component of stable points — distance-
+re-executable). Sample connectivity is measured as the largest mutual-3-NN component of passing sampled points (graph connectivity among samples, not geometric connectedness of the underlying stable set) — distance-
 radius estimators are meaningless in a 10-dimensional cube, where pairwise distances concentrate.
 
 ## Headline result
 
-**Package-level PASS (Sim Plan §6).** The economy is stable across the entire Sim Plan §4
-parameter space: under the final (v3) kill criterion the full 45,000-run re-certification is
-**300/300 points stable, 0 trips of any class, 100% contiguous region** (smoke 60/60). The §10
-kill criteria do **not** bind anywhere in the swept ranges — the launch registry's hypotheses
-survive unchallenged.
+**Path A PASS (Sim Plan §6).** Under the final (v3) criterion, all 300 sampled Latin-hypercube points passed across 50 seeds and three demand variants; the sampled stable points formed one mutual-3-NN component. Across those sampled runs, the 45,000-run re-certification produced **300/300 stable sampled points and zero trips of any class** (smoke 60/60). The §10 kill criteria did not bind at any sampled point. No claim is made about unsampled points in the continuous parameter space.
 
-> **v3 re-certification sweep: COMPLETE.** 300 points × 50 seeds × 3 demand variants =
-> 45,000 runs, 5.9 h. This is the out-of-sample gate — the floors are 1.25× the max over 3
+> **v3 out-of-sample re-certification sweep: COMPLETE** (the 5.9 h run named above; distinct from the 3.8 h initial full sweep). 300 points × 50 seeds × 3 demand variants =
+> 45,000 runs. This is the out-of-sample gate — the floors are 1.25× the max over 3
 > seeds/point; the sweep tested 50 seeds/point and found **zero** false trips, confirming the
 > safety factor holds against seeds the derivation never saw. Result in `full_summary.json`.
 
@@ -59,7 +61,7 @@ Only positive controls (real spirals must trip) exposed the failures.**
    all on this criterion. Fixed with log-convexity + a bootstrap grace window (DECISIONS #13);
    codified in Launch Spec v0.3 §10.
 2. **v1 (convexity + grace): ~5% per-run false-positive rate.** The full sweep tripped
-   2,299 of 45,000 runs — all supply-class, uniform across parameter space, 63% in shock-up
+   2,299 of 45,000 runs — all supply-class, with no apparent association to the sampled parameter values, 63% in shock-up
    variants. Deterministic re-execution measured the streaks: median cumulative Δlog(credit)
    0.14, p99 0.26, **max 0.38**, credit never above 22% of its structural ceiling; even the
    launch center tripped 6/150. Shock-recovery transients, not spirals. (DECISIONS #29.)
@@ -88,7 +90,7 @@ Only positive controls (real spirals must trip) exposed the failures.**
      3-epoch spiral segments (0.30) overlap — the scale cannot discriminate, so it is dropped
      rather than fudged.
 
-**Carry into the next Launch Spec §10 revision:** the v3 formulation — grace 12, windows
+**Incorporated into Launch Spec v0.3.3 §10:** the v3 formulation — grace 12, windows
 {6, 12}, floors {0.46, 0.63}, wash-filtered + agent-normalized statistic — with the standing
 caveat that the floor *values* are re-derived on testnet data (below).
 
@@ -115,12 +117,12 @@ can. That is precisely why the controls, not the sweep, are the load-bearing val
 Floors are **not asserted**; they are the committed output of `sweep/derive_noise_floor.py`
 (artifact: `results/sweep_reports/noise_floor_derivation.json`). Method:
 
-1. Run the honest economy across the **full parameter space** — all 300 LHS points × 3 seeds ×
+1. Run the honest economy across **all 300 sampled points** — 300 LHS points × 3 seeds ×
    3 demand variants (2,709 runs) — plus **growing-economy honest runs** (5–25 agents/epoch)
    so the noise model matches a launching exchange, plus the four controls.
 2. For each run measure the peak E(W) at every (grace ∈ {7,10,12,14}, window ∈ {3,6,12}).
 3. Set F(W) = **1.25 × max honest E(W)** (the safety factor: a 25% band above the worst honest
-   run anywhere in the swept space, so an unlucky honest seed does not trip).
+   run among the sampled points, so an unlucky honest seed does not trip).
 4. Keep only (grace, window) scales where F(W) sits **below** the weakest should-trip control
    with real margin. Report the margin; drop scales that overlap.
 
@@ -222,21 +224,21 @@ thresholds.
 
 ## §8 parameter-registry recommendation (Sim Plan deliverable 5)
 
-Stability does not discriminate within the swept ranges, so recommendations rest on the
+Stability does not discriminate among sampled points spanning the swept ranges, so recommendations rest on the
 scenario evidence and mechanism findings. **Verdict: retain every §8 launch hypothesis.**
 
 | Symbol | Launch value | Recommendation | Evidence |
 |---|---|---|---|
 | D_erg | 8 ergs | **Keep 8; treat ≥ 6.7 as a hard floor, ≥ 8 as the safe margin** | Supply-stability indifferent (flat terciles). S4: at every tested D_erg extraction = 0, but below 200/30 ≈ 6.7 the credit floor contracts and turnover farming achieved lines *above* bond — Sybil defense then leans on the wash detector rather than arithmetic. D_erg ≥ 8 keeps the collateralization invariant self-enforcing. |
-| α | 0.25 | Keep 0.25 | Stable across 0.05–0.6; v1 noise mildly favored higher α (earned headroom smooths demand swings). 0.25–0.5 all defensible. |
-| β | 0.005 | Keep 0.005 | Stable across 0.001–0.03. S6: fee-bleed attack uneconomic at 0.005 (capacity decay escapes it). Note: β prices *listed capacity*, and at no swept value does it counteract quality concentration — that is matching-driven, not a β dial. |
+| α | 0.25 | Keep 0.25 | No instability observed among sampled values spanning 0.05–0.6; v1 noise mildly favored higher α (earned headroom smooths demand swings). 0.25–0.5 all defensible. |
+| β | 0.005 | Keep 0.005 | No instability observed among sampled values spanning 0.001–0.03. S6: fee-bleed attack uneconomic at 0.005 (capacity decay escapes it). Note: β prices *listed capacity*, and at no sampled value does it counteract quality concentration — that is matching-driven, not a β dial. |
 | settlement fee | 1.0% | Keep 1.0% | Converges to the ~0.7–0.9% cost-recovery band within 2–3 epochs from the 1.0% start; both sweep extremes (<0.5%, >1.7%) showed elevated v1 noise. |
-| L_cap | 10 × L_floor | Keep 10× (scaling L_floor_active, DECISIONS #12) | Stable across 3–25×. |
-| p* | 0.50 | Keep 0.50 | Stable across 0.35–0.65; basket calibration hits the target by construction and the epoch-6 retarget stays inside δ under attack (S2). |
+| L_cap | 10 × L_floor | Keep 10× (scaling L_floor_active, DECISIONS #12) | No instability observed among sampled values spanning 3–25×. |
+| p* | 0.50 | Keep 0.50 | No instability observed among sampled values spanning 0.35–0.65; basket calibration hits the target by construction and the epoch-6 retarget stays inside δ under attack (S2). |
 | k | 25 | Keep 25 | No stability or scenario signal across 5–100. |
 | λ | 2.0 | Keep 2.0 — **flag as untested-in-anger** | No version transitions occur in Path A scope; λ never binds. Path B should not treat it as calibrated. |
-| Kleos half-life | 180 d | Keep 180 d | Stable across 60–540 d; S7's patient-cluster share *decays* under it. |
-| capacity_min | 1 task/epoch | Keep 1 | Stable across 1–5. |
+| Kleos half-life | 180 d | Keep 180 d | No instability observed among sampled values spanning 60–540 d; S7's patient-cluster share *decays* under it. |
+| capacity_min | 1 task/epoch | Keep 1 | No instability observed among sampled values spanning 1–5. |
 | Jury size / seed rate / duty quota | 5 / 2% / 8 | Keep | Not stressed beyond stubs (disputes stochastic per Sim Plan §1; seed rate fixed per §4). |
 
 **Registry additions Path A recommends the spec adopt as named parameters:** the v3
@@ -255,7 +257,7 @@ denominator), so the spec should note the two are a **coupled calibration unit**
 
 S1 wash rush: negative leakage in all three disclosure variants (full evasion −7.8%/attempt).
 S2 median drag: SCU drift 0.006 difficulty units, inside δ. S3 capacity flood: envelope binds,
-94% overflow, victim income 0.97× twin. S4 Sybils: extraction 0 at every D_erg (caveat above).
+94% overflow, victim income 0.97× twin. S4 Sybils: extraction 0 at every tested D_erg value (caveat above).
 S5 griefing: strictly positive attacker cost. S6 fee bleed: both policies escape via capacity
 decay. S7 patience: peak decisive power 28.8%, below the ⅓ blocking threshold, decaying.
 
@@ -280,9 +282,9 @@ decay. S7 patience: peak decisive power 28.8%, below the ⅓ blocking threshold,
 
 ## Go/no-go
 
-**Go.** Path A's mandate — determine whether a stable operating region exists before any
-contract is written (Sim Plan §6) — is answered affirmatively: the stable region is the entire
-§4 sweep volume, the seven scripted attacks fail against the calibrated defenses, and the
+**Scope of this verdict.** "Go" here is a *technical pass within the implemented model*: the simulated launch economy behaved stably at the sampled points and the criterion battery validated in both directions. It is **not** external mechanism-design acceptance, **not** legal or regulatory clearance, and **not** authorization to deploy. Whitepaper §18.1 still makes independent mechanism-design review a gate, and production floors must be re-derived on testnet (see the standing rule). With that scope stated:
+
+**Go.** On Path A's mandate — gather evidence, before any contract is written (Sim Plan §6), on whether a stable operating domain exists — Path A found that all 300 sampled configurations passed and formed one mutual-3-NN component, providing evidence for a candidate operating domain without establishing stability at unsampled points. At the recommended registry, the seven scripted attacks fail against the calibrated defenses, and the
 supply kill-criterion is now validated in **both** directions (honest noise does not trip it;
 positive controls confirm real spirals do). The four defects Path A found were all in the
 constitution's own instrumentation — the §10 supply criterion — not in the economy:
@@ -298,6 +300,5 @@ constitution's own instrumentation — the §10 supply criterion — not in the 
 The through-line for Path B and the Launch Spec: **a kill criterion is itself a mechanism that
 must be adversarially tested.** The composite supply criterion, its positive/negative control
 battery, the auditable floor-derivation script, and the coupled-subsystem CI lock are as much a
-Path A deliverable as the economic parameter region. Nothing in the economy resisted
-validation; the instrumentation took four iterations — and would have shipped broken twice
+Path A deliverable as the sampled-domain evidence. No modeled economic failure was observed at the tested points; this does not establish that the economy is defect-free. The instrumentation took four iterations — and would have shipped broken twice
 (v1 over-halting, v2 under-halting) without the positive controls and the growth stress test.

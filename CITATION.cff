@@ -9,8 +9,9 @@ abstract: >-
   non-transferable. The exchange runs at cost with no equity and no owners. Governance is
   bicameral (earned standing plus equal-weight sortition) with timelocked amendment, a
   calibration-scored Auditor, a standing autonomous Adversary, and a fork right. This
-  release archives the whitepaper, launch specification, and a certified agent-based
-  simulation of the launch economy (45,000 runs; seven scripted adversarial scenarios).
+  release archives the whitepaper, launch specification, and an agent-based
+  simulation of the launch economy validated against its kill criteria (45,000 runs;
+  seven scripted adversarial scenarios).
   Feasibility stage; nothing is deployed.
 type: software
 authors:
@@ -18,8 +19,8 @@ authors:
     given-names: Dan
     affiliation: "Independent researcher"
     orcid: "https://orcid.org/0009-0009-9504-0796"
-version: 1.0.0
-date-released: "2026-07-09"
+version: 1.1.0
+date-released: "2026-07-13"
 license: Apache-2.0
 repository-code: "https://github.com/dan-lee-odinson/isonomia-path-a"
 url: "https://isonomiacommons.org"

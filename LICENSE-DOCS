@@ -1,0 +1,49 @@
+Documentation and Research-Content License
+===========================================
+
+This repository is licensed by content type. The root LICENSE file (Apache
+License 2.0) governs software and executable code ONLY. It does NOT govern the
+prose research content.
+
+The following are licensed under the Creative Commons Attribution 4.0
+International License (CC BY 4.0):
+
+  - The whitepaper (ISONOMIA_Whitepaper_*.md)
+  - The Tier-1 Launch Specification (ISONOMIA_Tier1_Launch_Spec_*.md)
+  - The Path A Simulation Plan (ISONOMIA_PathA_Simulation_Plan_*.md)
+  - The calibration record (CALIBRATION.md)
+  - All other prose, documentation, and research content in this repository,
+    except source code.
+
+Full CC BY 4.0 text: https://creativecommons.org/licenses/by/4.0/legalcode
+
+The following are licensed under the Apache License, Version 2.0 (see the root
+LICENSE file):
+
+  - All source code, scripts, simulation implementation, and executable
+    artifacts.
+
+Full Apache License 2.0 text: https://www.apache.org/licenses/LICENSE-2.0
+
+Simulation data and generated results
+-------------------------------------
+Simulation output data, calibration artifacts, and generated result files
+(e.g. sweep reports, summary JSON) are research content and are licensed under
+CC BY 4.0, the same as the prose documentation. The code that produces them is
+licensed under Apache License 2.0. Where a file mixes both (e.g. a notebook),
+the code cells are Apache-2.0 and the prose/figures/data are CC BY 4.0.
+
+Attribution
+-----------
+© 2026 Dan Lee-Odinson (ORCID 0009-0009-9504-0796). Attribute reused research
+content to the specific source document and version, not to a single DOI, since
+different documents live in different frozen artifacts. Use the form:
+
+  Dan Lee-Odinson, "[document title and version]," The Isonomia Commons
+  repository, [repository release DOI or https://github.com/dan-lee-odinson/isonomia-path-a],
+  CC BY 4.0.
+
+For the frozen preprint package specifically, cite its preprint DOI
+(10.5281/zenodo.21338480). Do not use the preprint DOI as a blanket attribution
+target for the Launch Spec, Simulation Plan, or CALIBRATION, which may differ
+from the versions frozen in that preprint.

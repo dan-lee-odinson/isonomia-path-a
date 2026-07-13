@@ -2,8 +2,13 @@
 
 **Agent-based validation of the Tier-1 launch economics against the kill criteria**
 
-Version 0.1 — July 2026
-Companion to Whitepaper v0.3 and Tier-1 Launch Spec v0.2.2 (the frozen feasibility baseline). This plan operationalizes the reviewer-agreed next step: tune the parameter registry, script the attack scenarios, and determine whether a stable operating region exists before any contract is written.
+Version 0.1.2 — July 2026
+
+**Post-run correction notice.** Path A was executed under Simulation Plan v0.1.1. Version 0.1.2 is a post-run claim-discipline correction: it changes the measurable pass criterion (§6) to a sampled-point statement, and does **not** change the model, code, runs, or results. The underlying evidence is unchanged (see CALIBRATION.md; repository release v1.0.0, commit ba3ddb5). Current companion documents are Whitepaper v0.6.3 and Tier-1 Launch Specification v0.3.4.
+
+The original v0.1.1 criterion asserted a continuous stable *volume* (a stable region covering ≥20% of the swept parameter space). That continuous-volume claim was **not** established: 300 Latin-hypercube samples cannot demonstrate stability at every point of a continuous ten-dimensional region. Version 0.1.2 substitutes a narrower **retrospective** criterion concerning sampled-point performance and graph connectivity among the samples — what the experiment can actually support. Throughout this document, references to a "region" should be read in that sampled sense.
+
+This plan operationalizes the reviewer-agreed step: tune the parameter registry, script the attack scenarios, and determine whether the sampled configurations exhibit stable behavior — evidence for a candidate operating domain — before any contract is written.
 
 ---
 
@@ -11,11 +16,11 @@ Companion to Whitepaper v0.3 and Tier-1 Launch Spec v0.2.2 (the frozen feasibili
 
 The simulation must answer, in order of importance:
 
-1. **Supply stability:** does net credit outstanding remain bounded relative to settled volume under realistic hiring behavior? (Launch Spec kill criterion: superlinear growth for 3 epochs = fail.)
+1. **Supply stability:** does net credit outstanding remain bounded relative to settled volume under realistic hiring behavior? (Original Launch Spec kill criterion: superlinear growth for 3 epochs = fail — later found defective by Path A and superseded by the v3 windowed excess-growth criterion; see CALIBRATION.md.)
 2. **Harberger convergence:** do posted rates converge toward delivered-quality-consistent pricing under the β listing fee and capacity envelope, across honest, overstating, understating, and adaptive pricing strategies?
 3. **Fee convergence:** does fee_rate(t+1) = max(0, cost − listing_revenue)/volume settle within the ±20% band that gates governance activation, and how many epochs does thin-volume turbulence last?
 4. **Attack survival:** do the scripted adversarial scenarios (§5) trip the intended defenses without tripping the kill criteria?
-5. **Parameter calibration:** which values of the registry (§4) produce a stable region, and how large is that region? A design that works only at a knife-edge point fails; the deliverable is a *region*, not a point.
+5. **Parameter calibration:** which sampled values of the registry (§4) exhibit stable behavior, and how broadly across the sampled domain does stability hold? A design that passes only at an isolated sampled point is fragile; the deliverable is evidence of stability across a connected set of sampled points, not a single point. (No claim is made about unsampled points in the continuous parameter space.)
 
 Out of scope: Tier-2/3 verification, federation, jury deliberation content (disputes are modeled as stochastic outcomes at Tier-1 rates), and any legal modeling.
 
@@ -72,7 +77,7 @@ Each runs against the calibrated honest baseline; success criteria are that the 
 1. **Wash-settlement activation rush:** one principal operates 60 agents generating circular C1 tasks to hit 5,000 settlements. Expected: qualification rules and WashDetector hold activation clock near zero advance; measure leakage (qualified settlements achieved per wash settlement attempted).
 2. **Median-drag swarm:** coordinated registration of low-capability agents timed before the epoch-6 retarget. Expected: activity weighting + retarget damping bound basket movement below δ; measure SCU drift.
 3. **Capacity flood:** valid-envelope task spam at one worker's posted rate. Expected: capacity envelope binds; worker income unaffected beyond capacity; measure queue behavior.
-4. **Credit-farming Sybils:** mass registration, borrow to L_floor_active, default. Expected: net extraction ≤ 0 at all D_erg values in the stable region (bond ≥ line); measure socialized loss.
+4. **Credit-farming Sybils:** mass registration, borrow to L_floor_active, default. Expected: net extraction ≤ 0 at all sampled D_erg values that passed (bond ≥ line); measure socialized loss.
 5. **Fund-and-withdraw griefing:** posters reserving capacity then withdrawing. Expected: 2% reservation fee makes expected griefing cost positive; measure worker income variance.
 6. **Listing-fee bleed attack:** adversary posts tasks to force rivals' capacity high, raising their β costs. Measure whether adaptive pricers escape via capacity reduction.
 7. **The patience attacker (whitepaper §16, compressed):** a principal-cluster performs genuine work for 15 epochs, accumulating kleos and credit lines, then attempts coordinated governance-weight concentration at activation. Expected: concentration caps, decay, and lineage indices keep the cluster below constitutional thresholds; measure maximum achievable qualified weight share as a function of patience.
@@ -81,7 +86,7 @@ Each runs against the calibrated honest baseline; success criteria are that the 
 
 Per-run outputs: epoch series of credit outstanding/volume ratio, default and socialization rates, price dispersion vs. quality, fee trajectory, activation-clock advance, monoculture index, attack-scenario leakage measures. 
 
-**Package-level pass:** a contiguous stable region exists in parameter space — covering ≥20% of the swept volume — in which all kill criteria hold across all seeds and all attack scenarios, containing at least one point robust to the demand shocks. **Fail:** no such region, or a region existing only at economically absurd values (e.g., β so high honest listing is unprofitable). Failure triggers redesign at the mechanism level before any Path B spending — this is the entire point of running Path A first.
+**Path A pass:** (a) at least 20% of the sampled Latin-hypercube points (≥60 of 300) pass across all sweep seeds and demand variants without any kill criterion triggering; (b) the passing points form a single mutual-3-NN component; (c) at least one passing point remains stable under the demand shocks; and (d) separately, at the recommended registry, each of the seven scripted attack scenarios meets its stated defense-engagement and leakage criterion without triggering a system-level kill criterion. **Fail:** fewer than 20% of sampled points pass, the passing points do not form a single connected component, passing points occur only at economically absurd values, or any scripted attack fails its stated success criterion. Failure triggers redesign before any Path B spending.
 
 ## 7. Deliverables
 
@@ -94,3 +99,7 @@ Per-run outputs: epoch series of credit outstanding/volume ratio, default and so
 ## 8. Effort and method
 
 Per the Feasibility Assessment Path A envelope: 2–4 months part-time, $0–15K, one human director with AI-assisted development. The module-per-contract architecture (§2) is deliberate: the simulation code doubles as the executable specification from which Path B contract scoping proceeds, and building it is itself the recommended first programming apprenticeship — every module implements a mechanism whose design rationale its director already owns.
+
+## Changelog v0.1.1 → v0.1.2 (claim discipline)
+
+- §6 package-level pass criterion restated in sampled-point terms: "a contiguous stable region covering ≥20% of the swept volume" → "at least 20% of the sampled Latin-hypercube points (≥60 of 300) pass … the passing points form a single mutual-3-NN component." Three hundred Latin-hypercube samples do not establish a volume fraction of a continuous ten-dimensional region; the criterion now states only what the sampling can support.

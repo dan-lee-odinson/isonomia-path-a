@@ -1,6 +1,7 @@
 # isonomia-path-a
 
-[![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.21287288-1682D4.svg)](https://doi.org/10.5281/zenodo.21287288)
+[![Software DOI](https://img.shields.io/badge/Software%20DOI-10.5281%2Fzenodo.21287288-1682D4.svg)](https://doi.org/10.5281/zenodo.21287288)
+[![Preprint DOI](https://img.shields.io/badge/Preprint%20DOI-10.5281%2Fzenodo.21338480-B31B1B.svg)](https://doi.org/10.5281/zenodo.21338480)
 
 **Agent-based simulation of the ISONOMIA Tier-1 launch economics** — Path A of the staged build
 plan: validate the mutual-credit exchange design against its kill criteria *before* any
@@ -19,9 +20,9 @@ The four frozen baseline documents in [docs/](docs/) are the authority for every
 
 | Document | Role |
 |---|---|
-| [Path A Simulation Plan v0.1.1](docs/ISONOMIA_PathA_Simulation_Plan_v0.1.1.md) | Primary build spec: modules, agents, sweeps, attack scenarios |
-| [Tier-1 Launch Spec v0.3.3](docs/ISONOMIA_Tier1_Launch_Spec_v0.3.3.md) | Contract-level rules; parameter registry (§8); implementation clarifications (§13); its Conflict Register governs conflicts. §10 codifies this repo's v3 kill-criterion formulation and names [killcriteria.py](src/isonomia/killcriteria.py) authoritative |
-| [Whitepaper v0.6.2](docs/ISONOMIA_Whitepaper_v0.6.2.md) | Constitutional design rationale |
+| [Path A Simulation Plan v0.1.2](docs/ISONOMIA_PathA_Simulation_Plan_v0.1.2.md) | Primary build spec: modules, agents, sweeps, attack scenarios |
+| [Tier-1 Launch Spec v0.3.4](docs/ISONOMIA_Tier1_Launch_Spec_v0.3.4.md) | Contract-level rules; parameter registry (§8); implementation clarifications (§13); its Conflict Register governs conflicts. §10 codifies this repo's v3 kill-criterion formulation and names [killcriteria.py](src/isonomia/killcriteria.py) authoritative |
+| [Whitepaper v0.6.3](docs/ISONOMIA_Whitepaper_v0.6.3.md) | Constitutional design rationale |
 | [Feasibility Assessment](docs/ISONOMIA_Feasibility_Assessment.md) | Scope discipline: this is Path A only |
 
 Where the specs are ambiguous, [DECISIONS.md](DECISIONS.md) records the interpretation and the
@@ -75,6 +76,21 @@ full market/institution organs, the Sim Plan §3 behavior-policy population, all
 attack scenarios with leakage reports, and the §4 Latin-hypercube sweep machinery with an
 executed smoke sweep. See [CALIBRATION.md](CALIBRATION.md) for what the smoke sweep shows
 and how to launch the full sweep; [DECISIONS.md](DECISIONS.md) for every interpretation the
-specs left open (27 entries, each citing its governing section).
+specs left open (36 entries, each citing its governing section).
 
-License: [Apache-2.0](LICENSE).
+## Versioning, licensing & citation
+
+Current repository documents: **Whitepaper v0.6.3**, **Tier-1 Launch Spec v0.3.4**, **Path A Simulation Plan v0.1.2**. See [VERSION_MANIFEST.md](VERSION_MANIFEST.md) for the full version and DOI scheme — the two separate tracks (living-repository versions vs. frozen DOI artifacts) and which identifier cites what.
+
+**Licensing is split by content type** (see [LICENSE-DOCS](LICENSE-DOCS) for the file-level split):
+
+- Prose, whitepaper, specifications, research documentation, simulation data, and generated results → **CC BY 4.0**.
+- Software and executable code → **Apache License 2.0** (see [LICENSE](LICENSE)).
+
+The archived software record therefore contains mixed-license material; `LICENSE-DOCS` controls the file-level split that the single Zenodo license field cannot express.
+
+**DOIs** (distinct roles — see the manifest):
+
+- Software concept DOI [10.5281/zenodo.21287288](https://doi.org/10.5281/zenodo.21287288) — the repository/software archive; resolves to the latest software release.
+- Preprint concept DOI [10.5281/zenodo.21338480](https://doi.org/10.5281/zenodo.21338480) — the scholarly preprint, for citation.
+- The repository **release DOI** for v1.1.0 is assigned by Zenodo when the GitHub release is published.

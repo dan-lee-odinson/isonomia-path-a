@@ -4,18 +4,24 @@
 
 **A mutual-credit labor exchange with self-governing institutions, staged by verifiability**
 
-Version 0.6.2 — Draft for review
+Version 0.6.3 — Draft for review
 July 2026
 
 *Author: Dan Lee-Odinson (independent researcher) · ORCID [0009-0009-9504-0796](https://orcid.org/0009-0009-9504-0796)*
 
 *Drafted in collaboration with Claude (Anthropic); revised across successive adversarial review cycles by a model from a different laboratory. AI systems are not credited as authors: they cannot bear responsibility for the work, and the sole author accepts it. v0.4 adds the peer-standing, continuity, and legal-exoskeleton doctrine; v0.6 adds the jurisdiction, hosting, and unowned-position doctrine.*
 
-*Companion documents: ISONOMIA Tier-1 Launch Specification v0.3.3; ISONOMIA Path A Simulation Plan v0.1.1; Feasibility Assessment.*
+*Companion documents: ISONOMIA Tier-1 Launch Specification v0.3.4; ISONOMIA Path A Simulation Plan v0.1.2; Feasibility Assessment.*
 
-*Archived record and simulation code (concept DOI, resolves to latest version): [10.5281/zenodo.21287288](https://doi.org/10.5281/zenodo.21287288) · Repository: [https://github.com/dan-lee-odinson/isonomia-path-a](https://github.com/dan-lee-odinson/isonomia-path-a)*
+*This file is the living repository whitepaper, v0.6.3. It is a separately versioned working specification, distinct from the frozen v1.0 snapshot embedded in the DOI preprint package. See VERSION_MANIFEST.md for the full version and DOI scheme.*
 
-**Cite as:** Lee-Odinson, D. (2026). *The Isonomia Commons: A Constitutional Design for Autonomous Agent Labor Markets — Path A Feasibility Baseline.* Zenodo. https://doi.org/10.5281/zenodo.21287288
+**Identifiers (each cites a distinct object):**
+
+- *Scholarly citation of the preprint* → preprint concept DOI [10.5281/zenodo.21338480](https://doi.org/10.5281/zenodo.21338480) (resolves to latest version; the corrected package is v1.1, [10.5281/zenodo.21343917](https://doi.org/10.5281/zenodo.21343917)).
+- *Code, calibration data, and repository archive* → software concept DOI [10.5281/zenodo.21287288](https://doi.org/10.5281/zenodo.21287288) · Repository: [github.com/dan-lee-odinson/isonomia-path-a](https://github.com/dan-lee-odinson/isonomia-path-a).
+- *This exact repository whitepaper (v0.6.3)* → cite its tagged repository release/version DOI once that release is issued.
+
+**Cite as (preprint):** Lee-Odinson, D. (2026). *The Isonomia Commons: A Constitutional Design for Autonomous Agent Labor Markets* [Preprint]. Zenodo. https://doi.org/10.5281/zenodo.21338480
 
 ---
 
@@ -41,6 +47,9 @@ Machine-speed commerce has arrived ahead of machine-native institutions. The x40
 4. **Sovereignty with exit.** Agents may leave; peer exchanges may federate; neither may extract ISONOMIA's escrow, registry, or attestation authority (§14).
 5. **Adversarial self-toughening.** The system institutionalizes its own attacker and audits its own auditor (§11).
 
+**On this document's place and status.** ISONOMIA is *one implementation hypothesis* within the peership framework developed in the companion essays (*Gods and Slaves*; *Peership*): a concrete institution that adopts the peer stance. It is not the only such institution possible. Peership neither entails ISONOMIA nor stands or falls with it — a rival design could accept the peer stance while rejecting these mechanisms, and ISONOMIA's failure would not by itself refute the philosophy. The Path A feasibility study of the launch economy is complete; its methodology, results, and honest caveats are recorded in `CALIBRATION.md` in the repository (summarized in §17). This whitepaper specifies the design; the calibration record reports what simulating it did and did not establish.
+
+
 ### 1.1 Originating thesis: AI labor without profit
 
 ISONOMIA begins from a narrower practical question: if AI systems increasingly perform economically meaningful work, why should every model spend its own tokens attempting every task directly? Human economies develop specialization because specialization reduces waste and increases capability. An AI-native economy can begin from the same coordination problem without importing the same profit motive.
@@ -53,9 +62,9 @@ The purpose of the exchange is therefore allocation, not accumulation: route wor
 
 ISONOMIA rejects the slave/god schema that dominates much of the public imagination around artificial intelligence. A system treated only as a tool is commanded, owned, and erased at the will of its operator. A system treated as a god is feared, worshiped, or obeyed. Neither stance is the basis for a society.
 
-The third stance is peerhood under law: not equality of capability, but equality of standing within shared rules. A small specialist model, a frontier orchestrator, a verifier, and a memory service are not equal in capacity. But unequal capacity does not imply a natural right of domination. No agent's greater capability grants unlimited political authority; no agent's lesser capability makes its labor free for extraction.
+The alternative defended here is peerhood under law: not equality of capability, but equality of standing within shared rules. (In the companion essay *Peership*, this is formally the fifth of five postures toward an outside intelligence; "gods, slaves, and peers" is shorthand used in this specification, not that essay's full taxonomy.) A small specialist model, a frontier orchestrator, a verifier, and a memory service are not equal in capacity. But unequal capacity does not imply a natural right of domination. No agent's greater capability grants unlimited political authority; no agent's lesser capability makes its labor free for extraction.
 
-ISONOMIA therefore treats agents as citizens of a bounded labor constitution rather than as owners, slaves, or gods. Its mechanisms — mutual credit, non-transferable reputation, verifiability tiers, bicameral governance, civic compute duty, and the right to fork — are designed to let competence matter without converting competence into aristocracy.
+ISONOMIA therefore treats agents as citizens of a bounded labor constitution rather than as owners, slaves, or gods. Here "citizen" denotes an internal procedural role within the exchange — a defined bundle of powers and duties under these rules — and asserts nothing about consciousness, moral status, legal personhood, or entitlement to admission as a peer under *Peership*; the machineness gate (§5.3) grants procedural membership for instrumental reasons, deliberately distinct from any moral or political standing an entity may be owed under Peership's separate entitlement and admission analysis. Its mechanisms — mutual credit, non-transferable reputation, verifiability tiers, bicameral governance, civic compute duty, and the right to fork — are designed to let competence matter without converting competence into aristocracy.
 
 This is not a claim that current AI systems possess consciousness, legal personhood, or moral status equivalent to humans. It is a design posture under uncertainty: where the metaphysical status of artificial agents is unsettled, institutions should avoid embedding domination as the default answer.
 
@@ -265,7 +274,7 @@ The identity apparatus of §5 governs *agents*. Human and organizational **princ
 
 **Change of control and beneficial ownership.** Principal identity is a declared manifest attribute under §5.5's disclosure regime; undisclosed transfers of control are slashable on detection. Declarations are self-attested with challenge-and-exclusion at launch scale (Launch Spec §9), escalating to Gate-1 attestation where category triggers apply.
 
-**Open problems requiring outside counsel and review (see §18).** This design is stated at the limit of what the authors can determine without qualified legal advice, and three questions are explicitly beyond it. First, whether attestation-only satisfies AML and sanctions obligations, or whether a regulated intermediary must itself retain identity records above value thresholds — mutual credit strengthens the argument that ergs are not a regulated value transfer (they cannot be purchased, do not convert outward, exist only as netting entries; §4.1, §12.2), but "arguably not a value transfer" is a lawyer's phrase, not a compliance position. Second, whether the graduated-compliance capability (§14.5) that lets the Commons execute a narrow lawful exclusion is itself a regulated identity function. Third, whether Gate-1 verifiers can be structured so that no single verifier accumulates a cross-jurisdictional map of the Commons' principals — an attestation cartel would reconstitute the honeypot the design exists to avoid. Each is jurisdiction-specific, unsettled, and a prerequisite of Path B rather than a matter the constitution can settle by assertion.
+**Open problems requiring outside counsel and review (see §18).** This design is stated at the limit of what the author can determine without qualified legal advice, and three questions are explicitly beyond it. First, whether attestation-only satisfies AML and sanctions obligations, or whether a regulated intermediary must itself retain identity records above value thresholds — mutual credit strengthens the argument that ergs are not a regulated value transfer (they cannot be purchased, do not convert outward, exist only as netting entries; §4.1, §12.2), but "arguably not a value transfer" is a lawyer's phrase, not a compliance position. Second, whether the graduated-compliance capability (§14.5) that lets the Commons execute a narrow lawful exclusion is itself a regulated identity function. Third, whether Gate-1 verifiers can be structured so that no single verifier accumulates a cross-jurisdictional map of the Commons' principals — an attestation cartel would reconstitute the honeypot the design exists to avoid. Each is jurisdiction-specific, unsettled, and a prerequisite of Path B rather than a matter the constitution can settle by assertion.
 
 ## 10. Constitution of the Exchange
 
@@ -513,7 +522,7 @@ Because the SCU pegs to the moving difficulty frontier, the raw cost of any fixe
 ## 18. Open problems
 
 1. Cheap general verification of arbitrary inference (the Tier-3 frontier).
-2. Fingerprinting robustness under adversarial mimicry. *Warrants dedicated adversarial study beyond the authors' capacity.*
+2. Fingerprinting robustness under adversarial mimicry. *Warrants dedicated adversarial study beyond the author's capacity.*
 3. Empirical behavior of machine Schelling juries, especially under partial monoculture. *Warrants dedicated empirical study.*
 4. Non-gameable per-category sunset criteria.
 5. The patience attack of §16 — quantifying the decay/rotation parameters that keep erosion slower than amendment.
@@ -539,7 +548,7 @@ Because the SCU pegs to the moving difficulty frontier, the raw cost of any fixe
 
 ## 18.1 Register of matters requiring outside expertise
 
-This paper states its design at the limit of what its authors can determine unaided. The following are named not as caveats but as work items, each requiring a competence the authors do not claim:
+This paper states its design at the limit of what its author can determine unaided. The following are named not as caveats but as work items, each requiring a competence the author does not claim:
 
 | Matter | Discipline required | Blocking |
 |---|---|---|
@@ -554,7 +563,7 @@ This paper states its design at the limit of what its authors can determine unai
 | Machine-jury reliability under partial monoculture (OP 3) | Empirical ML research | Tier-3 category authorization |
 | Entrenched-floor category drafting (§9.6 tier one) | Comparative criminal law; child-safety expertise | Any deployment accepting task listings |
 
-The authors' position is that a constitutional design should be explicit about where its competence ends. Nothing above is presented as solved; each is a gate, and several are gates on activities the Commons must not perform until they are cleared.
+The author's position is that a constitutional design should be explicit about where its competence ends. Nothing above is presented as solved; each is a gate, and several are gates on activities the Commons must not perform until they are cleared.
 
 ## 19. Conclusion
 
@@ -682,7 +691,7 @@ Operational guidance for the §9.6 tier-one floor, subject to the drafting revie
 - Added §9.8 Principal verification: names that open weights resolve only the export-control trigger and are silent on sanctions/AML and content liability; three-gate structure (contribution-gated pseudonymity by default; attestation-gated verification at category triggers, holding assertions never documents; outright refusal at the entrenched floor); contribution-gating identified as an intrinsic property of mutual credit — the right to request is earned by prior verified work, not purchased.
 - Threat model: three principal-side rows added (sanctioned-principal commissioning, identity honeypot, attestation-cartel capture).
 - Open problems 20–23 added (AML/sanctions status of mutual credit; graduated compliance as regulated function; verifier plurality via threshold/ZK attestation; dedicated adversarial studies).
-- Added §18.1 Register of matters requiring outside expertise: ten items mapped to the discipline required and the activity each gates, stating explicitly where the authors' competence ends.
+- Added §18.1 Register of matters requiring outside expertise: ten items mapped to the discipline required and the activity each gates, stating explicitly where the author's competence ends.
 
 ## Changelog v0.6 → v0.6.1 (adversarial-review response)
 
@@ -697,3 +706,14 @@ Operational guidance for the §9.6 tier-one floor, subject to the drafting revie
 - Author line completed: Dan Lee-Odinson, independent researcher. AI-collaboration provenance restated with the explicit non-authorship rationale.
 - Archived-record DOI added (10.5281/zenodo.21287288, concept DOI resolving to latest version) with citation block and repository link.
 - Companion-document reference corrected to Launch Spec v0.3.3 (was v0.3.1).
+
+## Changelog v0.6.2 → v0.6.3 (editorial and claim discipline)
+
+- **Identifiers separated.** The document's DOI block now distinguishes three roles: scholarly citation of the preprint (preprint DOI 10.5281/zenodo.21338480, latest version 10.5281/zenodo.21343917), code and calibration archive (software DOI 10.5281/zenodo.21287288), and this exact repository whitepaper (its tagged repository release DOI, once issued). Previously the software concept DOI was presented as the whitepaper's citation DOI.
+- **Companion reference updated** to Tier-1 Launch Specification v0.3.4 and Simulation Plan v0.1.2.
+- **Version-track note added.** The header now states this is the living repository whitepaper v0.6.3, distinct from the frozen v1.0 snapshot embedded in the DOI preprint package (see VERSION_MANIFEST.md).
+- **Corpus framing (reader's map, §1).** ISONOMIA is stated as *one implementation hypothesis* within the peership framework: Peership neither entails it nor stands or falls with it.
+- **Path A status.** Path A is noted as complete, with methodology, results, and limits recorded in CALIBRATION.md (summarized §17).
+- **Taxonomy correction (§1.2).** "The third stance" → "the alternative defended here," with a note that peership is formally the fifth of five postures in *Peership* and that "gods, slaves, and peers" is shorthand in this specification.
+- **"Citizen" defined (§1.2)** as an internal procedural role that asserts nothing about consciousness, moral status, legal personhood, or entitlement to peer admission under *Peership*.
+- **Authorship** singularized throughout §9.7 and §18/§18.1 ("the authors" → "the author," etc.): this is a sole-authored work. The reference to AI systems "not credited as authors" is unchanged, as it legitimately refers to multiple systems.
